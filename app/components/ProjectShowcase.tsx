@@ -14,6 +14,7 @@ interface Project {
     link?: string;
     logo?: string;
     category: "work" | "personal";
+    xp?: number;
 }
 
 const projects: Project[] = [
@@ -43,6 +44,7 @@ const projects: Project[] = [
         link: "https://solx.ph",
         logo: "https://www.google.com/s2/favicons?domain=solx.ph&sz=128",
         category: "work",
+        xp: 2500,
     },
     {
         title: "FlashCargo",
@@ -72,6 +74,7 @@ const projects: Project[] = [
         link: "https://www.flashcargo.ai/",
         logo: "https://icons.duckduckgo.com/ip3/www.flashcargo.ai.ico",
         category: "work",
+        xp: 2000,
     },
     {
         title: "Advanced (AI Onboarding)",
@@ -97,6 +100,7 @@ const projects: Project[] = [
         link: "https://www.advanced.ph/",
         logo: "https://www.google.com/s2/favicons?domain=www.advanced.ph&sz=128",
         category: "work",
+        xp: 1500,
     },
     {
         title: "AI Document Discrepancy Scanner",
@@ -225,9 +229,107 @@ const projects: Project[] = [
 
 export default function ProjectShowcase() {
     const [activeTab, setActiveTab] = useState<"work" | "personal">("work");
+    const [selectedTech, setSelectedTech] = useState<string | null>(null);
+
+    const calculateLevelInfo = (exp: number) => {
+        let lvl = 1;
+        let xpRequired = 1000;
+        let accumulatedXp = 0;
+
+        while (exp >= accumulatedXp + xpRequired) {
+            accumulatedXp += xpRequired;
+            lvl++;
+            xpRequired += 500;
+        }
+
+        return {
+            level: lvl,
+            currentXp: exp - accumulatedXp,
+            requiredXp: xpRequired,
+            progress: ((exp - accumulatedXp) / xpRequired) * 100
+        };
+    };
+
+    const getTitle = (level: number) => {
+        if (level >= 50) return "Mythical Developer";
+        if (level >= 30) return "Grandmaster Architect";
+        if (level >= 20) return "Principal Engineer";
+        if (level >= 10) return "Senior Engineer";
+        if (level >= 5) return "Mid-Level Engineer";
+        return "Junior Engineer";
+    };
+
+    const getTopSkills = (allProjects: Project[]) => {
+        const skillMap: Record<string, number> = {};
+
+        allProjects.forEach(project => {
+            const projectXp = project.xp || 1000;
+            project.techStack.forEach(tech => {
+                skillMap[tech] = (skillMap[tech] || 0) + projectXp;
+            });
+        });
+
+        const maxSkillXp = Math.max(...Object.values(skillMap));
+
+        return Object.entries(skillMap)
+            .sort(([, a], [, b]) => b - a)
+            .slice(0, 4)
+            .map(([name, xp]) => ({
+                name,
+                xp,
+                percentage: (xp / maxSkillXp) * 100
+            }));
+    };
+
+    const getAttributes = (allProjects: Project[]) => {
+        const stats = {
+            "Backend": 0,
+            "Frontend": 0,
+            "DevOps": 0,
+            "AI & Data": 0,
+        };
+
+        const techMap: Record<string, keyof typeof stats> = {
+            "React": "Frontend", "Next.js": "Frontend", "Tailwind CSS": "Frontend", "Vue.js": "Frontend", "React Native": "Frontend",
+            "Node.js": "Backend", "PostgreSQL": "Backend", "Prisma": "Backend", "Rust": "Backend", "GraphQL": "Backend",
+            "Docker": "DevOps", "AWS": "DevOps", "Cloudflare Workers": "DevOps", "DigitalOcean": "DevOps",
+            "OpenAI API": "AI & Data", "Elasticsearch": "AI & Data", "Redis": "AI & Data", "Zod": "Backend"
+        };
+
+        allProjects.forEach(project => {
+            const projectXp = project.xp || 1000;
+            const techCount = project.techStack.length;
+            if (techCount === 0) return;
+
+            const xpPerTech = projectXp / techCount;
+
+            project.techStack.forEach(tech => {
+                const stat = techMap[tech] || "Backend"; // Default to Backend if unknown
+                stats[stat] += xpPerTech;
+            });
+        });
+
+        const maxStat = Math.max(...Object.values(stats));
+        return Object.entries(stats).map(([key, value]) => ({
+            name: key,
+            value: Math.round(value),
+            percentage: (value / maxStat) * 100
+        }));
+    };
+
+    const BASE_XP = 1000;
+    const totalExp = projects.reduce((acc, project) => acc + (project.xp || BASE_XP), 0);
+    const levelInfo = calculateLevelInfo(totalExp);
+    const topSkills = getTopSkills(projects);
+    const attributes = getAttributes(projects);
+    const currentTitle = getTitle(levelInfo.level);
 
     const filteredProjects = projects.filter(
-        (project) => project.category === activeTab
+        (project) => {
+            const matchesTab = project.category === activeTab;
+            const matchesTech = selectedTech ? project.techStack.includes(selectedTech) : true;
+            return matchesTab && matchesTech;
+        }
     );
 
     return (
@@ -265,6 +367,80 @@ export default function ProjectShowcase() {
                     >
                         GitHub
                     </Link>
+                </div>
+
+                {/* EXP Bar & Stats */}
+                <div className="w-full max-w-2xl mx-auto mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+                    <div className="flex justify-between text-sm font-bold text-gray-400 mb-2">
+                        <span className="text-blue-400 flex items-center gap-2">
+                            Level {levelInfo.level}
+                            <span className="text-gray-600">|</span>
+                            <span className="text-yellow-500">{currentTitle}</span>
+                        </span>
+                        <span className="text-purple-400">{levelInfo.currentXp} / {levelInfo.requiredXp} XP</span>
+                    </div>
+                    <div className="h-3 bg-gray-800/50 rounded-full overflow-hidden border border-gray-700/50 backdrop-blur-sm relative shadow-inner mb-8">
+                        <div
+                            className="h-full bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-1000 ease-out relative shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                            style={{ width: `${levelInfo.progress}%` }}
+                        >
+                            <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                        </div>
+                    </div>
+
+                    {/* Top Skills Stats */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        {topSkills.map((skill, i) => (
+                            <button
+                                key={skill.name}
+                                onClick={() => setSelectedTech(selectedTech === skill.name ? null : skill.name)}
+                                className={`bg-gray-800/30 border rounded-lg p-3 backdrop-blur-sm transition-all duration-300 hover:scale-105 text-left ${selectedTech === skill.name
+                                    ? 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/20'
+                                    : 'border-gray-700/30 hover:border-gray-600'
+                                    }`}
+                            >
+                                <div className="flex justify-between items-center mb-1">
+                                    <span className="text-xs font-medium text-gray-300">{skill.name}</span>
+                                    <span className="text-[10px] text-gray-500">{skill.xp} XP</span>
+                                </div>
+                                <div className="h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
+                                    <div
+                                        className={`h-full rounded-full ${i === 0 ? 'bg-yellow-500' :
+                                            i === 1 ? 'bg-gray-400' :
+                                                i === 2 ? 'bg-orange-500' : 'bg-blue-500'
+                                            }`}
+                                        style={{ width: `${skill.percentage}%` }}
+                                    ></div>
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Character Attributes */}
+                    <div className="grid grid-cols-4 gap-2 mb-4">
+                        {attributes.map((attr) => (
+                            <div key={attr.name} className="text-center">
+                                <div className="text-xs font-bold text-gray-500 mb-1">{attr.name}</div>
+                                <div className="h-24 w-full bg-gray-800/30 rounded-lg relative overflow-hidden border border-gray-700/30 flex items-end justify-center pb-2 group">
+                                    <div
+                                        className={`w-full mx-2 rounded-t transition-all duration-1000 ${attr.name === 'Backend' ? 'bg-red-500/50 group-hover:bg-red-500/70' :
+                                            attr.name === 'Frontend' ? 'bg-green-500/50 group-hover:bg-green-500/70' :
+                                                attr.name === 'DevOps' ? 'bg-blue-500/50 group-hover:bg-blue-500/70' :
+                                                    'bg-purple-500/50 group-hover:bg-purple-500/70'
+                                            }`}
+                                        style={{ height: `${attr.percentage}%` }}
+                                    ></div>
+                                    <span className="absolute bottom-1 text-[10px] font-mono text-white drop-shadow-md">
+                                        {attr.value}
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <p className="text-center text-xs text-gray-500 mt-6 font-mono">
+                        Total Experience Earned: <span className="text-gray-300">{totalExp.toLocaleString()} XP</span>
+                    </p>
                 </div>
             </header>
 
@@ -344,9 +520,17 @@ export default function ProjectShowcase() {
                                             </p>
                                         </div>
                                     </div>
-                                    <span className="text-xs font-medium text-gray-400 mt-2 md:mt-0 bg-gray-900/50 px-3 py-1 rounded-full border border-gray-700/50 whitespace-nowrap">
-                                        {project.date}
-                                    </span>
+                                    <div className="flex flex-col items-end gap-2 mt-2 md:mt-0">
+                                        <span className="text-xs font-medium text-gray-400 bg-gray-900/50 px-3 py-1 rounded-full border border-gray-700/50 whitespace-nowrap">
+                                            {project.date}
+                                        </span>
+                                        <span className={`text-xs font-bold px-3 py-1 rounded-full border whitespace-nowrap flex items-center gap-1 ${activeTab === 'work'
+                                            ? 'text-blue-300 bg-blue-400/10 border-blue-400/20'
+                                            : 'text-purple-300 bg-purple-400/10 border-purple-400/20'
+                                            }`}>
+                                            +{project.xp || 1000} XP
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <ul className="space-y-2 mb-6">
@@ -361,12 +545,19 @@ export default function ProjectShowcase() {
                                 <div className="mb-6">
                                     <div className="flex flex-wrap gap-2">
                                         {project.techStack.map((tech, i) => (
-                                            <span
+                                            <button
                                                 key={i}
-                                                className="px-2.5 py-1 text-xs font-medium bg-gray-700/30 text-gray-300 rounded-md border border-gray-700/50 hover:bg-gray-700/50 transition-colors"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedTech(selectedTech === tech ? null : tech);
+                                                }}
+                                                className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-all duration-200 ${selectedTech === tech
+                                                    ? 'bg-blue-500/20 text-blue-300 border-blue-500/50'
+                                                    : 'bg-gray-700/30 text-gray-300 border-gray-700/50 hover:bg-gray-700/50 hover:border-gray-600'
+                                                    }`}
                                             >
                                                 {tech}
-                                            </span>
+                                            </button>
                                         ))}
                                     </div>
                                 </div>
