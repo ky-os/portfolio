@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -158,14 +159,23 @@ export default function Home() {
             Email
           </a>
           <span>|</span>
-          <a
-            href="https://www.linkedin.com/in/ky-os/"
+          <Link
+            href="/linkedin"
             target="_blank"
             rel="noreferrer"
             className="hover:text-blue-400"
           >
             LinkedIn
-          </a>
+          </Link>
+          <span>|</span>
+          <Link
+            href="/github"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-blue-400"
+          >
+            GitHub
+          </Link>
         </div>
       </header>
 
