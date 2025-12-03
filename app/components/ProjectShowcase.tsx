@@ -394,6 +394,14 @@ export default function ProjectShowcase() {
                     >
                         GitHub
                     </Link>
+                    <span className="text-gray-600">|</span>
+                    <a
+                        href="/resume.pdf"
+                        download="Kyle_Osunero_Resume.pdf"
+                        className="hover:text-blue-400 transition-colors"
+                    >
+                        Resume
+                    </a>
                 </div>
 
                 {/* EXP Bar & Stats */}
