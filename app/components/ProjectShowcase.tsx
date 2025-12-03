@@ -19,7 +19,7 @@ interface Project {
 
 const projects: Project[] = [
     {
-        title: "Enterprise Energy Sourcing Platform",
+        title: "SolX Digital Demand Supply Matching (DDSM) Platform",
         role: "Software Engineer I",
         company: "SolX Technologies Inc.",
         date: "July 2024 - November 2025",
