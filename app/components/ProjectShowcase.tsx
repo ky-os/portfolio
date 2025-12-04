@@ -28,7 +28,6 @@ const projects: Project[] = [
             "Designed a type-safe backend layer using Next.js Server Actions and Drizzle ORM, eliminating the need for a separate API layer.",
             "Developed a robust form system using React Hook Form and Zod, implementing reusable input components for complex data models.",
             "Engineered the 'Bundling' feature, a complex many-to-many asset management interface for linking facilities to renewable energy portfolios.",
-            "Implemented strict Content Security Policy (CSP) headers to secure the application against XSS.",
         ],
         techStack: [
             "Next.js 15",
