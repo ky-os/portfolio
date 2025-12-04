@@ -362,16 +362,16 @@ export default function ProjectShowcase() {
     );
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-8 font-sans">
+        <div className="min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-4 md:p-8 font-sans">
             <header className="mb-12 text-center relative z-10">
                 <div className="absolute inset-0 -z-10 bg-blue-500/10 blur-3xl rounded-full transform -translate-y-1/2"></div>
-                <h1 className="text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-linear-to-r from-blue-400 to-purple-500">
+                <h1 className="text-3xl md:text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-linear-to-r from-blue-400 to-purple-500">
                     Kyle Osunero
                 </h1>
-                <p className="text-xl text-gray-300 mb-6">
+                <p className="text-lg md:text-xl text-gray-300 mb-6">
                     Software Engineer | Full-Stack Developer
                 </p>
-                <div className="flex justify-center gap-6 text-sm font-medium text-gray-400">
+                <div className="flex flex-wrap justify-center gap-4 md:gap-6 text-sm font-medium text-gray-400">
                     <a
                         href="mailto:kyle.osunero.21@gmail.com"
                         className="hover:text-blue-400 transition-colors"
@@ -454,7 +454,7 @@ export default function ProjectShowcase() {
                     </div>
 
                     {/* Character Attributes */}
-                    <div className="grid grid-cols-4 gap-2 mb-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
                         {attributes.map((attr) => (
                             <div key={attr.name} className="text-center">
                                 <div className="text-xs font-bold text-gray-500 mb-1">{attr.name}</div>
@@ -484,10 +484,10 @@ export default function ProjectShowcase() {
             <div className="max-w-4xl mx-auto">
                 {/* Tabs */}
                 <div className="flex justify-center mb-12">
-                    <div className="bg-gray-800/50 p-1 rounded-xl backdrop-blur-sm border border-gray-700/50 inline-flex">
+                    <div className="bg-gray-800/50 p-1 rounded-xl backdrop-blur-sm border border-gray-700/50 inline-flex flex-col sm:flex-row w-full sm:w-auto">
                         <button
                             onClick={() => setActiveTab("work")}
-                            className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === "work"
+                            className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-300 w-full sm:w-auto ${activeTab === "work"
                                 ? "bg-blue-600 text-white shadow-lg shadow-blue-500/25"
                                 : "text-gray-400 hover:text-white hover:bg-gray-700/50"
                                 }`}
@@ -496,7 +496,7 @@ export default function ProjectShowcase() {
                         </button>
                         <button
                             onClick={() => setActiveTab("personal")}
-                            className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === "personal"
+                            className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-300 w-full sm:w-auto ${activeTab === "personal"
                                 ? "bg-purple-600 text-white shadow-lg shadow-purple-500/25"
                                 : "text-gray-400 hover:text-white hover:bg-gray-700/50"
                                 }`}
@@ -532,11 +532,11 @@ export default function ProjectShowcase() {
                             </span>
 
                             {/* Content Card */}
-                            <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-700/50 hover:border-gray-600 hover:-translate-y-1">
+                            <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-4 md:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-700/50 hover:border-gray-600 hover:-translate-y-1">
                                 <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
                                     <div className="flex items-start gap-4">
                                         {project.logo && (
-                                            <div className="relative">
+                                            <div className="relative shrink-0">
                                                 <div className={`absolute inset-0 blur-lg opacity-20 rounded-full ${activeTab === 'work' ? 'bg-blue-500' : 'bg-purple-500'}`}></div>
                                                 <Image
                                                     src={project.logo}
@@ -548,16 +548,16 @@ export default function ProjectShowcase() {
                                             </div>
                                         )}
                                         <div>
-                                            <h3 className={`text-xl font-bold ${activeTab === 'work' ? 'text-blue-400' : 'text-purple-400'}`}>
+                                            <h3 className={`text-lg md:text-xl font-bold ${activeTab === 'work' ? 'text-blue-400' : 'text-purple-400'}`}>
                                                 {project.title}
                                             </h3>
-                                            <p className="text-md font-semibold text-gray-300">
+                                            <p className="text-sm md:text-md font-semibold text-gray-300">
                                                 {project.role}{" "}
-                                                {project.company && <span className="text-gray-500">at {project.company}</span>}
+                                                {project.company && <span className="text-gray-500 block md:inline">at {project.company}</span>}
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col items-end gap-2 mt-2 md:mt-0">
+                                    <div className="flex flex-col items-start md:items-end gap-2 mt-4 md:mt-0">
                                         <span className="text-xs font-medium text-gray-400 bg-gray-900/50 px-3 py-1 rounded-full border border-gray-700/50 whitespace-nowrap">
                                             {project.date}
                                         </span>
