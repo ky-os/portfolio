@@ -19,10 +19,41 @@ interface Project {
 
 const projects: Project[] = [
     {
+        title: "SolX Sales-Ops Admin Tool",
+        role: "Software Engineer I",
+        company: "SolX Technologies Inc.",
+        date: "September 2025 - November 2025",
+        description: [
+            "Architected a multi-provider mapping solution (Google Maps, Stadia Maps, Leaflet) to visualize complex geospatial data, including custom boundaries and facility clustering.",
+            "Designed a type-safe backend layer using Next.js Server Actions and Drizzle ORM, eliminating the need for a separate API layer.",
+            "Developed a robust form system using React Hook Form and Zod, implementing reusable input components for complex data models.",
+            "Engineered the 'Bundling' feature, a complex many-to-many asset management interface for linking facilities to renewable energy portfolios.",
+            "Implemented strict Content Security Policy (CSP) headers to secure the application against XSS.",
+        ],
+        techStack: [
+            "Next.js 15",
+            "React 19",
+            "TypeScript",
+            "Tailwind CSS v4",
+            "shadcn/ui",
+            "Leaflet",
+            "React Leaflet",
+            "PostgreSQL",
+            "Drizzle ORM",
+            "React Hook Form",
+            "Zod",
+            "Server Actions"
+        ],
+        link: "https://solx.ph",
+        logo: "https://www.google.com/s2/favicons?domain=solx.ph&sz=128",
+        category: "work",
+        xp: 2500,
+    },
+    {
         title: "SolX Digital Demand Supply Matching (DDSM) Platform",
         role: "Software Engineer I",
         company: "SolX Technologies Inc.",
-        date: "July 2024 - November 2025",
+        date: "July 2024 - September 2025",
         description: [
             "Designed and implemented a cron job system to automatically update sourcing event statuses, ensuring data consistency.",
             "Developed end-to-end 'Suppliers' management with custom selection modals and robust validation using Yup.",
