@@ -87,6 +87,7 @@ function CompanyItem({ company }: { company: typeof companies[0] }) {
                         width={48}
                         height={48}
                         className="object-contain w-full h-full"
+                        unoptimized
                     />
                 </div>
             ) : (

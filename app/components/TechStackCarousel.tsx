@@ -77,6 +77,7 @@ function TechItem({ tech }: { tech: typeof technologies[0] }) {
                     width={40}
                     height={40}
                     className="object-contain w-full h-full"
+                    unoptimized
                 />
             </div>
             <span className="text-xs font-medium text-gray-400 group-hover/item:text-blue-300 transition-colors whitespace-nowrap">
