@@ -15,7 +15,6 @@ const technologies = [
     { name: "Docker", icon: "https://cdn.simpleicons.org/docker/2496ED" },
     { name: "AWS", icon: "https://cdn.simpleicons.org/amazonaws/FF9900" },
     { name: "GraphQL", icon: "https://cdn.simpleicons.org/graphql/E10098" },
-    { name: "Rust", icon: "https://cdn.simpleicons.org/rust/white" },
     { name: "Redis", icon: "https://cdn.simpleicons.org/redis/DC382D" },
     { name: "Git", icon: "https://cdn.simpleicons.org/git/F05032" },
 ];

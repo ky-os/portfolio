@@ -72,7 +72,7 @@ export default function ProjectShowcase() {
 
         const techMap: Record<string, keyof typeof stats> = {
             "React": "Frontend", "Next.js": "Frontend", "Tailwind CSS": "Frontend", "Vue.js": "Frontend", "React Native": "Frontend",
-            "Node.js": "Backend", "PostgreSQL": "Backend", "Prisma": "Backend", "Rust": "Backend", "GraphQL": "Backend",
+            "Node.js": "Backend", "PostgreSQL": "Backend", "Prisma": "Backend", "GraphQL": "Backend",
             "Docker": "DevOps", "AWS": "DevOps", "Cloudflare Workers": "DevOps", "DigitalOcean": "DevOps",
             "OpenAI API": "AI & Data", "Elasticsearch": "AI & Data", "Redis": "AI & Data", "Zod": "Backend"
         };
