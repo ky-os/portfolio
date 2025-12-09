@@ -298,3 +298,85 @@ export const featuredCompany = {
     "Refactored legacy codebases to modern React patterns for better performance.",
   ],
 };
+
+export interface Bookmark {
+  title: string;
+  description: string;
+  techStack: string[];
+  link: string;
+  category: string;
+  logo: string;
+}
+
+export const bookmarks: Bookmark[] = [
+  {
+    title: "Vite",
+    description:
+      "Next Generation Frontend Tooling. Fast and opinionated build tool.",
+    techStack: ["React", "Vue", "Svelte", "Preact", "Lit", "Vanilla JS"],
+    link: "https://vitejs.dev/",
+    category: "Full Stack Development",
+    logo: "https://www.google.com/s2/favicons?domain=vitejs.dev&sz=128",
+  },
+  {
+    title: "Spring Boot",
+    description:
+      'Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications that you can "just run".',
+    techStack: ["Java", "Kotlin", "Groovy"],
+    link: "https://spring.io/projects/spring-boot",
+    category: "Full Stack Development",
+    logo: "https://www.google.com/s2/favicons?domain=spring.io&sz=128",
+  },
+  {
+    title: "Better T Stack",
+    description:
+      "A modern, type-safe tech stack for building full-stack applications.",
+    techStack: ["TypeScript", "Tailwind CSS", "tRPC", "Next.js", "Prisma"],
+    link: "https://create.t3.gg/",
+    category: "Full Stack Development",
+    logo: "https://www.google.com/s2/favicons?domain=create.t3.gg&sz=128",
+  },
+  {
+    title: "TanStack",
+    description:
+      "High-quality open-source software for web developers. Includes Query, Table, Router, and more.",
+    techStack: ["React", "Vue", "Svelte", "Solid", "Angular"],
+    link: "https://tanstack.com/",
+    category: "Full Stack Development",
+    logo: "https://www.google.com/s2/favicons?domain=tanstack.com&sz=128",
+  },
+  {
+    title: "v0",
+    description:
+      "Generative UI system by Vercel. Generate UI components with AI.",
+    techStack: ["React", "Tailwind CSS", "shadcn/ui"],
+    link: "https://v0.dev/",
+    category: "AI Coding & Prototyping",
+    logo: "https://www.google.com/s2/favicons?domain=v0.dev&sz=128",
+  },
+  {
+    title: "Lovable",
+    description:
+      "AI-powered web builder that turns ideas into production-ready code.",
+    techStack: ["React", "Tailwind CSS", "Supabase"],
+    link: "https://lovable.dev/",
+    category: "AI Coding & Prototyping",
+    logo: "https://www.google.com/s2/favicons?domain=lovable.dev&sz=128",
+  },
+  {
+    title: "Bolt",
+    description: "AI-powered development environment in the browser.",
+    techStack: ["WebContainers", "Node.js"],
+    link: "https://bolt.new/",
+    category: "AI Coding & Prototyping",
+    logo: "https://www.google.com/s2/favicons?domain=bolt.new&sz=128",
+  },
+  {
+    title: "Chef by Convex",
+    description: "AI assistant for building full-stack apps with Convex.",
+    techStack: ["Convex", "React", "Next.js"],
+    link: "https://convex.dev/",
+    category: "AI Coding & Prototyping",
+    logo: "https://www.google.com/s2/favicons?domain=convex.dev&sz=128",
+  },
+];
