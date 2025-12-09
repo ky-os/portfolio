@@ -330,8 +330,31 @@ export const bookmarks: Bookmark[] = [
   {
     title: "Better T Stack",
     description:
-      "A modern, type-safe tech stack for building full-stack applications.",
-    techStack: ["TypeScript", "Tailwind CSS", "tRPC", "Next.js", "Prisma"],
+      "A modular, type-safe full-stack generator. Supports TanStack Start, Hono, Bun, and more.",
+    techStack: [
+      "TanStack Start",
+      "Hono",
+      "Bun",
+      "Drizzle",
+      "Better-Auth",
+      "tRPC",
+    ],
+    link: "https://www.better-t-stack.dev/new",
+    category: "Full Stack Development",
+    logo: "https://www.google.com/s2/favicons?domain=better-t-stack.dev&sz=128",
+  },
+  {
+    title: "Create T3 App",
+    description:
+      "The best way to start a full-stack, typesafe Next.js app.",
+    techStack: [
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "Prisma",
+      "tRPC",
+      "NextAuth.js",
+    ],
     link: "https://create.t3.gg/",
     category: "Full Stack Development",
     logo: "https://www.google.com/s2/favicons?domain=create.t3.gg&sz=128",
