@@ -137,37 +137,37 @@ export default function ProjectCard({
                         ))}
                     </ul>
 
-                    <div className="flex flex-wrap gap-2 pt-6 border-t border-gray-800/50">
-                        {project.techStack.map((tech, i) => (
-                            <button
-                                key={i}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onTechClick(tech);
-                                }}
-                                className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all duration-200 border ${selectedTech === tech
-                                    ? `${activeTab === "work" ? "bg-blue-500/20 text-blue-300 border-blue-500/30" : "bg-purple-500/20 text-purple-300 border-purple-500/30"}`
-                                    : `bg-gray-800/50 text-gray-400 border-transparent hover:border-gray-700 hover:text-gray-200 ${bgHover}`
-                                    }`}
-                            >
-                                {tech}
-                            </button>
-                        ))}
-                    </div>
+                    <div className="pt-6 border-t border-gray-800/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex flex-wrap gap-2">
+                            {project.techStack.map((tech, i) => (
+                                <button
+                                    key={i}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onTechClick(tech);
+                                    }}
+                                    className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all duration-200 border ${selectedTech === tech
+                                        ? `${activeTab === "work" ? "bg-blue-500/20 text-blue-300 border-blue-500/30" : "bg-purple-500/20 text-purple-300 border-purple-500/30"}`
+                                        : `bg-gray-800/50 text-gray-400 border-transparent hover:border-gray-700 hover:text-gray-200 ${bgHover}`
+                                        }`}
+                                >
+                                    {tech}
+                                </button>
+                            ))}
+                        </div>
 
-                    {project.link && project.link !== "#" && (
-                        <div className="absolute top-0 right-0 p-4 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
+                        {project.link && project.link !== "#" && (
                             <Link
                                 href={project.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-2 rounded-lg bg-gray-800/80 text-gray-400 hover:text-white hover:bg-blue-600 transition-all shadow-lg backdrop-blur-sm flex items-center gap-2"
+                                className={`shrink-0 px-4 py-2 rounded-lg bg-gray-800 text-gray-300 hover:text-white transition-all flex items-center gap-2 text-xs font-bold border border-transparent hover:border-gray-700 ${activeTab === "work" ? "hover:bg-blue-600" : "hover:bg-purple-600"}`}
                             >
-                                <span className="text-xs font-bold">Visit</span>
-                                <ExternalLink size={16} />
+                                <span>Visit Project</span>
+                                <ExternalLink size={14} />
                             </Link>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
         </motion.div>
