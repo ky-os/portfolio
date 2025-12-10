@@ -52,6 +52,7 @@ export default function Navbar() {
                 <div className="flex md:hidden items-center gap-4">
                     <Link href="/process" className="text-sm text-gray-400 hover:text-white">Process</Link>
                     <Link href="/bookmarks" className="text-sm text-gray-400 hover:text-white">Bookmarks</Link>
+                    <Link href="/api/resume/pdf" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-white">Resume</Link>
                 </div>
             </div>
         </motion.nav>
