@@ -1,7 +1,62 @@
+export interface Experience {
+  id: string;
+  name: string;
+  role: string;
+  period: string;
+  logo: string | null;
+  url: string;
+  description: string;
+  initials?: string;
+}
+
+export const experiences: Experience[] = [
+  {
+    id: "solx",
+    name: "SolX Technologies Inc.",
+    role: "Software Engineer",
+    period: "July 2024 - November 2025",
+    logo: "https://www.google.com/s2/favicons?domain=solx.ph&sz=128",
+    url: "https://solx.ph",
+    description: "Leading backend development and system architecture.",
+  },
+  {
+    id: "stacktrek",
+    name: "StackTrek",
+    role: "Full Stack Developer",
+    period: "August 2023 - July 2025",
+    logo: "https://www.google.com/s2/favicons?domain=stacktrek.com&sz=128",
+    url: "https://stacktrek.com",
+    description:
+      "Developed scalable web applications and mentored junior devs.",
+  },
+  {
+    id: "ztock",
+    name: "ztock",
+    role: "Frontend Developer",
+    period: "November 2022 - March 2023",
+    logo: null,
+    url: "#",
+    description:
+      "Built responsive user interfaces for financial data visualization.",
+  },
+  {
+    id: "be-computer",
+    name: "B&E Computer Sales",
+    role: "IT Specialist",
+    period: "July 2020 - May 2021",
+    logo: null,
+    initials: "B&E",
+    url: "#",
+    description:
+      "Managed hardware and software solutions for enterprise clients.",
+  },
+];
+
 export interface Project {
   title: string;
   role: string;
   company?: string;
+  experienceId?: string;
   date: string;
   description: string[];
   techStack: string[];
@@ -16,6 +71,7 @@ export const projects: Project[] = [
     title: "SolX Sales-Ops Admin Tool",
     role: "Software Engineer I",
     company: "SolX Technologies Inc.",
+    experienceId: "solx",
     date: "September 2025 - November 2025",
     description: [
       "Architected a multi-provider mapping solution (Google Maps, Stadia Maps, Leaflet) to visualize complex geospatial data, including custom boundaries and facility clustering.",
@@ -46,6 +102,7 @@ export const projects: Project[] = [
     title: "SolX Digital Demand Supply Matching (DDSM) Platform",
     role: "Software Engineer I",
     company: "SolX Technologies Inc.",
+    experienceId: "solx",
     date: "July 2024 - September 2025",
     description: [
       "Designed and implemented a cron job system to automatically update sourcing event statuses, ensuring data consistency.",
@@ -84,6 +141,7 @@ export const projects: Project[] = [
     title: "FlashCargo",
     role: "Software Engineer",
     company: "StackTrek",
+    experienceId: "stacktrek",
     date: "February 2025 - July 2025",
     description: [
       "Integrated OpenAI to automate logistics data entry, reducing manual effort by auto-generating commodity and pack type suggestions.",
@@ -114,6 +172,7 @@ export const projects: Project[] = [
     title: "Advanced (AI Onboarding)",
     role: "Software Engineer",
     company: "StackTrek",
+    experienceId: "stacktrek",
     date: "April 2025 - June 2025",
     description: [
       "Architected resilient ID capture and verification pipeline with webcam support and OpenAI integration.",
@@ -140,6 +199,7 @@ export const projects: Project[] = [
     title: "AI Document Discrepancy Scanner",
     role: "Software Engineer",
     company: "StackTrek",
+    experienceId: "stacktrek",
     date: "January 2025 - February 2025",
     description: [
       "AI-powered proof-of-concept for document comparison.",
@@ -153,6 +213,7 @@ export const projects: Project[] = [
     title: "MySuperCheck",
     role: "Software Engineer",
     company: "StackTrek",
+    experienceId: "stacktrek",
     date: "August 2024 - January 2025",
     description: [
       "Developed a full-stack directory platform using Next.js 14, TypeScript, and PostgreSQL.",
@@ -185,6 +246,7 @@ export const projects: Project[] = [
     title: "MyBlissmi",
     role: "Software Engineer",
     company: "StackTrek",
+    experienceId: "stacktrek",
     date: "November 2023 - August 2024",
     description: [
       "Engineered robust booking management features including cancellation workflows, rescheduling conflict resolution, and precise timezone handling.",
@@ -216,6 +278,7 @@ export const projects: Project[] = [
     title: "Cult Cellar",
     role: "Software Engineer",
     company: "StackTrek",
+    experienceId: "stacktrek",
     date: "August 2023 - November 2023",
     description: [
       "Developed responsive authentication, account, and product pages using Next.js and Tailwind CSS, ensuring a seamless user experience.",
@@ -232,6 +295,7 @@ export const projects: Project[] = [
     title: "Ztock",
     role: "Frontend Developer Intern",
     company: "ztock®",
+    experienceId: "ztock",
     date: "November 2022 - March 2023",
     description: [
       "Built the Ztock mobile app using React Native.",
@@ -245,6 +309,7 @@ export const projects: Project[] = [
     title: "Inventory Management System",
     role: "Freelance Full-Stack Developer",
     company: "B&E Computer Sales",
+    experienceId: "be-computer",
     date: "July 2020 - May 2021",
     description: ["Custom POS-like inventory management system."],
     techStack: ["React", "GraphQL", "PostgreSQL"],
@@ -345,8 +410,7 @@ export const bookmarks: Bookmark[] = [
   },
   {
     title: "Create T3 App",
-    description:
-      "The best way to start a full-stack, typesafe Next.js app.",
+    description: "The best way to start a full-stack, typesafe Next.js app.",
     techStack: [
       "Next.js",
       "TypeScript",

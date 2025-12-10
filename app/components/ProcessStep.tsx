@@ -61,7 +61,7 @@ export default function ProcessStep({
             {/* Icon Bubble */}
             <motion.div
                 whileHover={{ scale: 1.1, rotate: 5 }}
-                className="relative z-10 shrink-0 w-14 h-14 md:w-18 md:h-18 rounded-2xl bg-gray-900 border border-gray-800 flex items-center justify-center shadow-lg group-hover:border-blue-500/50 group-hover:shadow-blue-500/20 transition-all duration-300 self-start"
+                className="hidden md:flex relative z-10 shrink-0 w-14 h-14 md:w-18 md:h-18 rounded-2xl bg-gray-900 border border-gray-800 items-center justify-center shadow-lg group-hover:border-blue-500/50 group-hover:shadow-blue-500/20 transition-all duration-300 self-start"
             >
                 <div className="text-gray-400 group-hover:text-blue-400 transition-colors duration-300">
                     {icon}
@@ -96,18 +96,29 @@ export default function ProcessStep({
 
                 <div className="flex flex-col md:flex-row gap-6 relative z-10">
                     <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-blue-400 transition-colors">
-                                {title}
-                            </h3>
-                            <span className="text-xs font-mono text-gray-500 uppercase tracking-wider border border-gray-800 px-2 py-0.5 rounded bg-gray-950">
-                                {role}
-                            </span>
-                        </div>
+                        <div className="flex flex-col gap-4 md:block">
+                            {/* Mobile Icon */}
+                            <div className="md:hidden shrink-0 w-12 h-12 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center shadow-lg group-hover:border-blue-500/50 group-hover:shadow-blue-500/20 self-start">
+                                <div className="text-gray-400 group-hover:text-blue-400 transition-colors duration-300">
+                                    {icon}
+                                </div>
+                            </div>
 
-                        <p className="text-gray-400 leading-relaxed mb-4">
-                            {description}
-                        </p>
+                            <div>
+                                <div className="flex flex-wrap items-center gap-3 mb-2">
+                                    <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                                        {title}
+                                    </h3>
+                                    <span className="text-xs font-mono text-gray-500 uppercase tracking-wider border border-gray-800 px-2 py-0.5 rounded bg-gray-950">
+                                        {role}
+                                    </span>
+                                </div>
+
+                                <p className="text-gray-400 leading-relaxed mb-4">
+                                    {description}
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     {/* AI Persona Card */}
@@ -122,7 +133,7 @@ export default function ProcessStep({
                                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                                 className="absolute inset-0 rounded-full border border-blue-500/20 border-t-blue-400/60 border-r-transparent border-b-blue-400/60 border-l-transparent"
                             />
-                            
+
                             {/* Inner Ring (Counter-Rotating) */}
                             <motion.div
                                 animate={{ rotate: -360 }}
@@ -143,19 +154,19 @@ export default function ProcessStep({
                                 {/* Hologram Scanline Overlay */}
                                 <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(59,130,246,0.1)_50%)] bg-size-[100%_4px] pointer-events-none opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-300" />
                             </div>
-                            
+
                             {/* Status Dot */}
                             <div className="absolute bottom-1 right-6 w-3 h-3">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500 border-2 border-gray-950"></span>
                             </div>
                         </div>
-                        
+
                         <div className="text-sm font-bold text-purple-300 mb-1 relative group-hover/avatar:text-purple-200 transition-colors">
                             {bmadRole}
                         </div>
                         <div className="text-[10px] text-purple-400/60 uppercase tracking-wider font-mono flex items-center gap-1 justify-center">
-                            <span className="w-1 h-1 bg-purple-500 rounded-full animate-pulse"/>
+                            <span className="w-1 h-1 bg-purple-500 rounded-full animate-pulse" />
                             AI Agent
                         </div>
                     </motion.div>

@@ -3,52 +3,7 @@ import Image from "next/image";
 import { Card, CardContent } from "./ui/Card";
 import { SectionHeader } from "./ui/SectionHeader";
 import { ExternalLink } from "lucide-react";
-
-interface Company {
-    name: string;
-    role: string;
-    period: string;
-    logo: string | null;
-    url: string;
-    description: string;
-    initials?: string;
-}
-
-const companies: Company[] = [
-    {
-        name: "SolX Technologies Inc.",
-        role: "Software Engineer",
-        period: "2023 - Present",
-        logo: "https://www.google.com/s2/favicons?domain=solx.ph&sz=128",
-        url: "https://solx.ph",
-        description: "Leading backend development and system architecture."
-    },
-    {
-        name: "StackTrek",
-        role: "Full Stack Developer",
-        period: "2022 - 2023",
-        logo: "https://www.google.com/s2/favicons?domain=stacktrek.com&sz=128",
-        url: "https://stacktrek.com",
-        description: "Developed scalable web applications and mentored junior devs."
-    },
-    {
-        name: "ztock",
-        role: "Frontend Developer",
-        period: "2021 - 2022",
-        logo: null,
-        url: "#",
-        description: "Built responsive user interfaces for financial data visualization."
-    },
-    {
-        name: "B&E Computer Sales",
-        role: "Full Stack Developer",
-        period: "2020 - 2021",
-        logo: null,
-        initials: "B&E",
-        url: "#",
-        description: "Managed hardware and software solutions for enterprise clients."
-    }
-];
+import { experiences } from "@/lib/data";
 
 export default function ProfessionalExperience() {
     return (
@@ -56,7 +11,7 @@ export default function ProfessionalExperience() {
             <SectionHeader title="Professional Experience" subtitle="My journey through the tech industry." />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {companies.map((company, index) => (
+                {experiences.map((company, index) => (
                     <Card key={index} delay={index * 0.1} className="group">
                         <CardContent className="flex items-start gap-4">
                             <div className="shrink-0">

@@ -66,7 +66,7 @@ export default function ProjectCard({
             {/* Icon Bubble */}
             <motion.div
                 whileHover={{ scale: 1.1, rotate: 5 }}
-                className={`relative z-10 shrink-0 w-14 h-14 md:w-18 md:h-18 rounded-2xl bg-gray-900 border border-gray-800 flex items-center justify-center shadow-lg ${borderColor} ${shadowColor} transition-all duration-300 self-start`}
+                className={`hidden md:flex relative z-10 shrink-0 w-14 h-14 md:w-18 md:h-18 rounded-2xl bg-gray-900 border border-gray-800 items-center justify-center shadow-lg ${borderColor} ${shadowColor} transition-all duration-300 self-start`}
             >
                 {project.logo ? (
                     <div className="w-10 h-10 md:w-12 md:h-12 relative">
@@ -102,18 +102,41 @@ export default function ProjectCard({
                 <div className="relative z-10">
                     <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-6">
                         <div className="flex-1 min-w-0">
-                            <h3 className={`text-xl md:text-2xl font-bold text-white group-hover/card:${textColor} transition-colors leading-tight`}>
-                                {project.title}
-                            </h3>
-                            <p className="text-gray-400 font-medium mt-1 flex items-center gap-2">
-                                {project.role}
-                                {project.company && (
-                                    <>
-                                        <span className="w-1 h-1 rounded-full bg-gray-600"></span>
-                                        <span className="text-gray-500">{project.company}</span>
-                                    </>
-                                )}
-                            </p>
+                            <div className="flex flex-col gap-4 md:block">
+                                {/* Mobile Icon */}
+                                <div className={`md:hidden shrink-0 w-12 h-12 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center shadow-lg ${borderColor} ${shadowColor}`}>
+                                    {project.logo ? (
+                                        <div className="w-8 h-8 relative">
+                                            <Image
+                                                src={project.logo}
+                                                alt={`${project.title} logo`}
+                                                fill
+                                                className="object-contain"
+                                                unoptimized
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className={`text-lg font-bold ${textColor}`}>
+                                            {project.title.substring(0, 2).toUpperCase()}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <h3 className={`text-xl md:text-2xl font-bold text-white group-hover/card:${textColor} transition-colors leading-tight`}>
+                                        {project.title}
+                                    </h3>
+                                    <p className="text-gray-400 font-medium mt-1 flex flex-wrap items-center gap-2">
+                                        {project.role}
+                                        {project.company && (
+                                            <>
+                                                <span className="w-1 h-1 rounded-full bg-gray-600"></span>
+                                                <span className="text-gray-500">{project.company}</span>
+                                            </>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-3 shrink-0 md:flex-col md:items-end lg:flex-row lg:items-center">
