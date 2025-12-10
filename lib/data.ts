@@ -402,4 +402,27 @@ export const bookmarks: Bookmark[] = [
     category: "AI Coding & Prototyping",
     logo: "https://www.google.com/s2/favicons?domain=convex.dev&sz=128",
   },
+  {
+    title: "BMAD Method",
+    description:
+      "A universal AI agent framework that orchestrates specialized AI agents to work together in a collaborative multi-agent system.",
+    techStack: [
+      "Multi-Agent Systems",
+      "AI Agents",
+      "Agile",
+      "LLM Orchestration",
+    ],
+    link: "https://github.com/bmad-code-org/BMAD-METHOD",
+    category: "AI Coding & Prototyping",
+    logo: "https://www.google.com/s2/favicons?domain=github.com&sz=128",
+  },
+  {
+    title: "Serena (MCP Server)",
+    description:
+      "A powerful coding agent toolkit and MCP server that provides semantic code retrieval, navigation, and editing capabilities.",
+    techStack: ["MCP", "Semantic Search", "LSP", "Coding Agent"],
+    link: "https://github.com/oraios/serena",
+    category: "AI Coding & Prototyping",
+    logo: "https://www.google.com/s2/favicons?domain=github.com&sz=128",
+  },
 ];
