@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import VirtualPet from "./components/VirtualPet";
+import { ConvexClientProvider } from "@/lib/convex-client";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,8 +30,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <VirtualPet />
-        {children}
+        <ConvexClientProvider>
+          <VirtualPet />
+          {children}
+        </ConvexClientProvider>
         <Script
           src="https://umami.ky-os.dev/script.js"
           data-website-id="57954fcf-b352-4b49-9596-b1989eb207a5"

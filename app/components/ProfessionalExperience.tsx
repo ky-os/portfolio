@@ -3,16 +3,20 @@ import Image from "next/image";
 import { Card, CardContent } from "./ui/Card";
 import { SectionHeader } from "./ui/SectionHeader";
 import { ExternalLink } from "lucide-react";
-import { experiences } from "@/lib/data";
+import { Doc } from "../../convex/_generated/dataModel";
 
-export default function ProfessionalExperience() {
+interface ProfessionalExperienceProps {
+    experiences: Doc<"experiences">[];
+}
+
+export default function ProfessionalExperience({ experiences }: ProfessionalExperienceProps) {
     return (
         <section className="max-w-5xl mx-auto px-4 mb-24">
             <SectionHeader title="Professional Experience" subtitle="My journey through the tech industry." />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {experiences.map((company, index) => (
-                    <Card key={index} delay={index * 0.1} className="group">
+                    <Card key={company._id} delay={index * 0.1} className="group">
                         <CardContent className="flex items-start gap-4">
                             <div className="shrink-0">
                                 {company.logo ? (
@@ -28,7 +32,7 @@ export default function ProfessionalExperience() {
                                     </div>
                                 ) : (
                                     <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 font-bold text-gray-400 text-xl group-hover:border-blue-500/30 group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-colors">
-                                        {company.initials || company.name.substring(0, 2).toUpperCase()}
+                                        {company.name.substring(0, 2).toUpperCase()}
                                     </div>
                                 )}
                             </div>

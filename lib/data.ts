@@ -353,7 +353,7 @@ export const featuredCompany = {
   description:
     "A leading energy technology company in the Philippines, providing digital solutions for the power sector. I played a key role in developing their core platforms, focusing on scalability, performance, and user experience.",
   logo: "https://www.google.com/s2/favicons?domain=solx.ph&sz=128",
-  link: "https://solx.ph",
+  url: "https://solx.ph",
   highlights: [
     "Architected a multi-provider mapping solution for geospatial data visualization.",
     "Designed type-safe backend layers using Next.js Server Actions and Drizzle ORM.",

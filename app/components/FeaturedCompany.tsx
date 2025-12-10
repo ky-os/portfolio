@@ -9,7 +9,7 @@ interface FeaturedCompanyProps {
     period: string;
     description: string;
     logo: string;
-    link: string;
+    url: string;
     highlights: string[];
     status?: string;
 }
@@ -20,7 +20,7 @@ export default function FeaturedCompany({
     period,
     description,
     logo,
-    link,
+    url,
     highlights,
     status
 }: FeaturedCompanyProps) {
@@ -84,7 +84,7 @@ export default function FeaturedCompany({
 
                         <div className="flex items-center justify-start gap-4 pt-6 border-t border-gray-800/50">
                             <a
-                                href={link}
+                                href={url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5"

@@ -7,10 +7,16 @@ import ProfessionalExperience from "./ProfessionalExperience";
 import TechnologiesAndTools from "./TechnologiesAndTools";
 import Navbar from "./Navbar";
 import ProjectCard from "./ProjectCard";
-import { projects, featuredCompany, type Project } from "@/lib/data";
 import { SectionHeader } from "./ui/SectionHeader";
+import { Doc } from "../../convex/_generated/dataModel";
 
-export default function ProjectShowcase() {
+interface ProjectShowcaseProps {
+    projects: Doc<"projects">[];
+    featuredCompany: Doc<"featuredCompany">;
+    experiences: Doc<"experiences">[];
+}
+
+export default function ProjectShowcase({ projects, featuredCompany, experiences }: ProjectShowcaseProps) {
     const [activeTab, setActiveTab] = useState<"work" | "personal">("work");
     const [selectedTech, setSelectedTech] = useState<string | null>(null);
 
@@ -42,7 +48,7 @@ export default function ProjectShowcase() {
         return "Junior Engineer";
     };
 
-    const getTopSkills = (allProjects: Project[]) => {
+    const getTopSkills = (allProjects: typeof projects) => {
         const skillMap: Record<string, number> = {};
 
         allProjects.forEach(project => {
@@ -64,7 +70,7 @@ export default function ProjectShowcase() {
             }));
     };
 
-    const getAttributes = (allProjects: Project[]) => {
+    const getAttributes = (allProjects: typeof projects) => {
         const stats = {
             "Backend": 0,
             "Frontend": 0,
@@ -114,6 +120,7 @@ export default function ProjectShowcase() {
             return matchesTab && matchesTech;
         }
     );
+
 
     return (
         <div className="min-h-screen bg-gray-950 text-white font-sans selection:bg-blue-500/30">
@@ -230,7 +237,7 @@ export default function ProjectShowcase() {
 
             {/* Carousels */}
             <div className="space-y-0 mb-24">
-                <ProfessionalExperience />
+                <ProfessionalExperience experiences={experiences} />
                 <TechnologiesAndTools />
             </div>
 

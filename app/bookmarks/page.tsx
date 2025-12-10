@@ -1,14 +1,18 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { bookmarks, type Bookmark } from "@/lib/data";
+import { convex } from "@/lib/convex";
+import { api } from "../../convex/_generated/api";
+import { Doc } from "../../convex/_generated/dataModel";
 
 export const metadata = {
   title: "Bookmarks | Kyle Osunero",
   description: "A collection of interesting tools and references.",
 };
 
-export default function BookmarksPage() {
+export default async function BookmarksPage() {
+  const bookmarks = await convex.query(api.queries.getBookmarks);
+
   const groupedBookmarks = bookmarks.reduce((acc, bookmark) => {
     const category = bookmark.category || "Uncategorized";
     if (!acc[category]) {
@@ -16,7 +20,7 @@ export default function BookmarksPage() {
     }
     acc[category].push(bookmark);
     return acc;
-  }, {} as Record<string, Bookmark[]>);
+  }, {} as Record<string, Doc<"bookmarks">[]>);
 
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans selection:bg-blue-500/30">
