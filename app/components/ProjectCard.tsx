@@ -34,7 +34,6 @@ export default function ProjectCard({
         });
     };
 
-    const themeColor = activeTab === "work" ? "blue" : "purple";
     const gradientFrom = activeTab === "work" ? "from-blue-500" : "from-purple-500";
     const gradientTo = activeTab === "work" ? "to-cyan-500" : "to-pink-500";
     const borderColor = activeTab === "work" ? "group-hover:border-blue-500/50" : "group-hover:border-purple-500/50";
