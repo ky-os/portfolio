@@ -1,12 +1,77 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import VirtualPetGame from "../VirtualPetGame";
 
 export function Footer() {
     const currentYear = new Date().getFullYear();
+    const [isGuarding, setIsGuarding] = useState(false);
+    const [guardTarget, setGuardTarget] = useState({ x: 0, y: 0 });
+    const [playerHealth, setPlayerHealth] = useState(3);
+    const [pets, setPets] = useState<Array<{
+        id: number;
+        initialPosition?: { x: number; y: number };
+        lifespan?: number;
+        isExiting?: boolean;
+    }>>([
+        { id: 1, initialPosition: { x: 50, y: 50 } },
+        { id: 2, initialPosition: { x: 150, y: 80 } },
+        { id: 3, initialPosition: { x: 250, y: 40 } },
+        { id: 4, initialPosition: { x: 350, y: 90 } },
+        { id: 5, initialPosition: { x: 450, y: 60 } }
+    ]);
+    const easterEggRef = useRef<HTMLAnchorElement>(null);
+    const footerRef = useRef<HTMLElement>(null);
+
+    const handlePlayerDamage = () => {
+        setPlayerHealth(prev => Math.max(0, prev - 1));
+    };
+
+    useEffect(() => {
+        if (playerHealth <= 0) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Reset health after a delay
+            setTimeout(() => setPlayerHealth(3), 1000);
+        }
+    }, [playerHealth]);
+
+    const handleLifespanEnd = (id: number) => {
+        setPets(prev => prev.map(p => p.id === id ? { ...p, isExiting: true } : p));
+    };
+
+    const handleExitComplete = (id: number) => {
+        setPets(prev => prev.filter(p => p.id !== id));
+    };
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (!footerRef.current) return;
+
+            const footerRect = footerRef.current.getBoundingClientRect();
+
+            // Check if mouse is in footer area
+            if (e.clientY >= footerRect.top && e.clientY <= footerRect.bottom) {
+                setIsGuarding(prev => {
+                    if (!prev) return true;
+                    return prev;
+                });
+                setGuardTarget({ x: e.clientX, y: e.clientY });
+            } else {
+                setIsGuarding(prev => {
+                    if (prev) return false;
+                    return prev;
+                });
+            }
+        };
+
+        document.addEventListener('mousemove', handleMouseMove);
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+        };
+    }, []);
 
     return (
-        <footer className="bg-gray-900/50 border-t border-gray-800/50 mt-24">
-            <div className="max-w-5xl mx-auto px-4 py-12">
+        <footer ref={footerRef} className="relative bg-gray-900/50 mt-24 overflow-hidden">
+            <div className="max-w-5xl mx-auto px-4 py-12 relative z-10">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="text-center md:text-left">
                         <h3 className="text-lg font-bold text-white mb-2">Kyle Osunero</h3>
@@ -54,9 +119,11 @@ export function Footer() {
                     <p className="text-gray-500 text-sm">
                         © {currentYear} Kyle Osunero. All rights reserved.
                     </p>
+
                     {/* Easter Egg - Subtle admin access */}
                     <div className="mt-4 flex justify-center">
                         <Link
+                            ref={easterEggRef}
                             href="/admin"
                             className="group relative inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-900/20 border border-red-800/40 hover:border-red-500/60 hover:bg-red-500/15 transition-all duration-300 cursor-pointer"
                             title="Curious? Click here..."
@@ -70,6 +137,18 @@ export function Footer() {
                     </div>
                 </div>
             </div>
+
+            {/* Virtual Pets guarding the easter egg */}
+            <VirtualPetGame
+                pets={pets}
+                isGuarding={isGuarding}
+                guardTarget={guardTarget}
+                onPetLifespanEnd={handleLifespanEnd}
+                onPetExitComplete={handleExitComplete}
+                onPlayerDamage={handlePlayerDamage}
+                playerHealth={playerHealth}
+            />
+
             <style dangerouslySetInnerHTML={{
                 __html: `
                     @keyframes easter-egg-pulse {

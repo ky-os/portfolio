@@ -359,7 +359,7 @@ export default defineSchema({
 - **ProjectShowcase**: Tabbed interface for work/personal projects with filtering
 - **ProfessionalExperience**: Grid layout for company experiences with hover effects
 - **TechnologiesAndTools**: Grid of technology icons with hover animations
-- **VirtualPet**: Interactive sprite-based pet component with CSS animations
+- **VirtualPetGame**: Interactive sprite-based pet game using Kaplay.js (ECS architecture)
 - **Card Components**: Reusable Card, CardHeader, CardContent, CardFooter with motion
 
 ### Routing Structure
