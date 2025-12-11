@@ -1,26 +1,31 @@
-import { projects, featuredCompany } from "./data";
+import { Doc } from "@/convex/_generated/dataModel";
 
-export function generateMarkdown(): string {
+export function generateMarkdown(
+  projects: Doc<"projects">[],
+  featuredCompany: Doc<"featuredCompany">
+): string {
   const name = "Kyle Osunero";
   const title = "Software Engineer";
   const email = "kyle.osunero.21@gmail.com";
   const linkedin = "https://www.linkedin.com/in/ky-os/";
   const github = "https://github.com/ky-os";
-  const portfolio = "https://ky-os.dev/"; // Assuming this is the URL or similar
+  const portfolio = "https://ky-os.dev/";
 
   let md = `# ${name}\n`;
   md += `**${title}**\n\n`;
   md += `Email: [${email}](mailto:${email}) | LinkedIn: [${linkedin}](${linkedin}) | GitHub: [${github}](${github}) | Portfolio: [${portfolio}](${portfolio})\n\n`;
 
-  md += `## Featured Experience\n\n`;
-  md += `### ${featuredCompany.role} at ${featuredCompany.name}\n`;
-  md += `*${featuredCompany.period}*\n\n`;
-  md += `${featuredCompany.description}\n\n`;
-  md += `**Highlights:**\n`;
-  featuredCompany.highlights.forEach((highlight) => {
-    md += `- ${highlight}\n`;
-  });
-  md += `\n`;
+  if (featuredCompany) {
+    md += `## Featured Experience\n\n`;
+    md += `### ${featuredCompany.role} at ${featuredCompany.name}\n`;
+    md += `*${featuredCompany.period}*\n\n`;
+    md += `${featuredCompany.description}\n\n`;
+    md += `**Highlights:**\n`;
+    featuredCompany.highlights.forEach((highlight) => {
+      md += `- ${highlight}\n`;
+    });
+    md += `\n`;
+  }
 
   md += `## Experience\n\n`;
 

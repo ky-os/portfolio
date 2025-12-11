@@ -9,6 +9,8 @@
  */
 
 import type * as actions from "../actions.js";
+import type * as auth from "../auth.js";
+import type * as http from "../http.js";
 import type * as mutations from "../mutations.js";
 import type * as queries from "../queries.js";
 import type * as seed from "../seed.js";
@@ -21,6 +23,8 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   actions: typeof actions;
+  auth: typeof auth;
+  http: typeof http;
   mutations: typeof mutations;
   queries: typeof queries;
   seed: typeof seed;

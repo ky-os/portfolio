@@ -14,9 +14,10 @@ interface ProjectShowcaseProps {
     projects: Doc<"projects">[];
     featuredCompany: Doc<"featuredCompany">;
     experiences: Doc<"experiences">[];
+    skills: Doc<"skills">[];
 }
 
-export default function ProjectShowcase({ projects, featuredCompany, experiences }: ProjectShowcaseProps) {
+export default function ProjectShowcase({ projects, featuredCompany, experiences, skills }: ProjectShowcaseProps) {
     const [activeTab, setActiveTab] = useState<"work" | "personal">("work");
     const [selectedTech, setSelectedTech] = useState<string | null>(null);
 
@@ -238,7 +239,7 @@ export default function ProjectShowcase({ projects, featuredCompany, experiences
             {/* Carousels */}
             <div className="space-y-0 mb-24">
                 <ProfessionalExperience experiences={experiences} />
-                <TechnologiesAndTools />
+                <TechnologiesAndTools skills={skills} />
             </div>
 
             <main className="max-w-5xl mx-auto px-4 pb-24">

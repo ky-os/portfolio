@@ -43,14 +43,35 @@ export const deleteExperience = mutation({
 
 // Skills mutations
 export const addSkill = mutation({
-args: {
-category: v.string(),
-items: v.array(v.string()),
-},
-handler: async (ctx, args) => {
-const id = await ctx.db.insert("skills", args);
-return id;
-},
+  args: {
+    category: v.string(),
+    items: v.array(v.object({ name: v.string(), icon: v.string() })),
+  },
+  handler: async (ctx, args) => {
+    const id = await ctx.db.insert("skills", args);
+    return id;
+  },
+});
+
+export const updateSkill = mutation({
+  args: {
+    id: v.id("skills"),
+    category: v.optional(v.string()),
+    items: v.optional(
+      v.array(v.object({ name: v.string(), icon: v.string() }))
+    ),
+  },
+  handler: async (ctx, args) => {
+    const { id, ...updates } = args;
+    await ctx.db.patch(id, updates);
+  },
+});
+
+export const deleteSkill = mutation({
+  args: { id: v.id("skills") },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.id);
+  },
 });
 
 // Projects mutations

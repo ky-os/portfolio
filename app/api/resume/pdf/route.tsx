@@ -6,12 +6,12 @@ import { api } from '@/convex/_generated/api';
 
 export async function GET() {
     const skillsData = await convex.query(api.queries.getSkills);
-    
+
     // Transform the skills data into the format expected by ResumeDocument
     const skills = {
-        languages: skillsData.find(s => s.category === "languages")?.items || [],
-        frameworks: skillsData.find(s => s.category === "frameworks")?.items || [],
-        tools: skillsData.find(s => s.category === "tools")?.items || [],
+        languages: skillsData.find(s => s.category === "languages")?.items.map(i => i.name) || [],
+        frameworks: skillsData.find(s => s.category === "frameworks")?.items.map(i => i.name) || [],
+        tools: skillsData.find(s => s.category === "tools")?.items.map(i => i.name) || [],
     };
 
     const stream = await renderToStream(<ResumeDocument skills={skills} />);

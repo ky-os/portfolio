@@ -1,7 +1,9 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { authTables } from "@convex-dev/auth/server";
 
 export default defineSchema({
+  ...authTables,
   experiences: defineTable({
     name: v.string(),
     role: v.string(),
@@ -25,7 +27,9 @@ export default defineSchema({
     logo: v.optional(v.string()),
     category: v.union(v.literal("work"), v.literal("personal")),
     xp: v.optional(v.number()),
-  }).index("by_experience", ["experienceId"]).index("by_category", ["category"]),
+  })
+    .index("by_experience", ["experienceId"])
+    .index("by_category", ["category"]),
 
   bookmarks: defineTable({
     title: v.string(),
@@ -50,6 +54,6 @@ export default defineSchema({
 
   skills: defineTable({
     category: v.string(), // "languages", "frameworks", "tools"
-    items: v.array(v.string()),
+    items: v.array(v.object({ name: v.string(), icon: v.string() })),
   }).index("by_category", ["category"]),
 });

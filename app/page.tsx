@@ -12,16 +12,18 @@ export default async function Home() {
   const projects = await convex.query(api.queries.getProjects);
   const featuredCompany = await convex.query(api.queries.getFeaturedCompany);
   const experiences = await convex.query(api.queries.getExperiences);
+  const skills = await convex.query(api.queries.getSkills);
 
   if (!featuredCompany) {
-      return <div>Error: Featured company data missing. Please seed the database.</div>;
+    return <div>Error: Featured company data missing. Please seed the database.</div>;
   }
 
   return (
-    <ProjectShowcase 
-      projects={projects} 
-      featuredCompany={featuredCompany} 
-      experiences={experiences} 
+    <ProjectShowcase
+      projects={projects}
+      featuredCompany={featuredCompany}
+      experiences={experiences}
+      skills={skills}
     />
   );
 }

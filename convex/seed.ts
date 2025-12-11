@@ -1,5 +1,5 @@
-import { internalMutation } from "./_generated/server";
-import { v } from "convex/values";
+import { mutation } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 
 const experiences = [
   {
@@ -307,7 +307,7 @@ const projects = [
     link: "https://github.com/ky-os/Arduino-Thermocycler",
     logo: "https://www.google.com/s2/favicons?domain=github.com&sz=128",
     category: "personal",
-    xp: 0
+    xp: 0,
   },
   {
     title: "Portfolio Website",
@@ -321,7 +321,7 @@ const projects = [
     techStack: ["Next.js", "Tailwind CSS", "TypeScript"],
     link: "https://github.com/ky-os/portfolio",
     category: "personal",
-    xp: 0
+    xp: 0,
   },
 ];
 
@@ -357,7 +357,7 @@ const bookmarks = [
   {
     title: "Spring Boot",
     description:
-      "Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications that you can \"just run\".",
+      'Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications that you can "just run".',
     techStack: ["Java", "Kotlin", "Groovy"],
     link: "https://spring.io/projects/spring-boot",
     category: "Full Stack Development",
@@ -462,7 +462,7 @@ const bookmarks = [
   },
 ];
 
-export const seed = internalMutation({
+export const seed = mutation({
   args: {},
   handler: async (ctx) => {
     // 1. Clear existing data (optional, but good for clean slate)
@@ -479,7 +479,7 @@ export const seed = internalMutation({
     for (const fc of existingFeatured) await ctx.db.delete(fc._id);
 
     // 2. Seed Experiences
-    const experienceIdMap = new Map<string, any>();
+    const experienceIdMap = new Map<string, Id<"experiences">>();
     for (const exp of experiences) {
       const { id, logo, ...rest } = exp;
       const newId = await ctx.db.insert("experiences", {
@@ -515,5 +515,46 @@ export const seed = internalMutation({
 
     // 5. Seed Featured Company
     await ctx.db.insert("featuredCompany", featuredCompany);
+
+    // 6. Seed Skills
+    const existingSkills = await ctx.db.query("skills").collect();
+    for (const skill of existingSkills) await ctx.db.delete(skill._id);
+
+    const skills = [
+      {
+        category: "languages",
+        items: [
+          { name: "TypeScript", icon: "https://cdn.simpleicons.org/typescript/3178C6" },
+          { name: "JavaScript", icon: "https://cdn.simpleicons.org/javascript/F7DF1E" },
+          { name: "Python", icon: "https://cdn.simpleicons.org/python/3776AB" },
+          { name: "SQL", icon: "https://cdn.simpleicons.org/postgresql/4169E1" },
+          { name: "HTML/CSS", icon: "https://cdn.simpleicons.org/html5/E34F26" },
+        ],
+      },
+      {
+        category: "frameworks",
+        items: [
+          { name: "React", icon: "https://cdn.simpleicons.org/react/61DAFB" },
+          { name: "Next.js", icon: "https://cdn.simpleicons.org/nextdotjs/white" },
+          { name: "Node.js", icon: "https://cdn.simpleicons.org/nodedotjs/339933" },
+          { name: "Tailwind CSS", icon: "https://cdn.simpleicons.org/tailwindcss/06B6D4" },
+          { name: "Express", icon: "https://cdn.simpleicons.org/express/white" },
+        ],
+      },
+      {
+        category: "tools",
+        items: [
+          { name: "Git", icon: "https://cdn.simpleicons.org/git/F05032" },
+          { name: "Docker", icon: "https://cdn.simpleicons.org/docker/2496ED" },
+          { name: "AWS", icon: "https://cdn.simpleicons.org/amazonaws/FF9900" },
+          { name: "PostgreSQL", icon: "https://cdn.simpleicons.org/postgresql/4169E1" },
+          { name: "Figma", icon: "https://cdn.simpleicons.org/figma/F24E1E" },
+        ],
+      },
+    ];
+
+    for (const skill of skills) {
+      await ctx.db.insert("skills", skill);
+    }
   },
 });
