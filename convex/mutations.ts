@@ -1,5 +1,6 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { checkAdmin } from "./helpers";
 
 // Experiences mutations
 export const addExperience = mutation({
@@ -14,6 +15,7 @@ export const addExperience = mutation({
     order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     const lastItem = await ctx.db.query("experiences").order("desc").first();
     const newOrder = args.order ?? (lastItem?.order ?? 0) + 1;
     const id = await ctx.db.insert("experiences", { ...args, order: newOrder });
@@ -33,6 +35,7 @@ export const updateExperience = mutation({
     order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     const { id, ...updates } = args;
     await ctx.db.patch(id, updates);
   },
@@ -43,6 +46,7 @@ export const reorderExperiences = mutation({
     items: v.array(v.object({ id: v.id("experiences"), order: v.number() })),
   },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     for (const item of args.items) {
       await ctx.db.patch(item.id, { order: item.order });
     }
@@ -52,6 +56,7 @@ export const reorderExperiences = mutation({
 export const deleteExperience = mutation({
   args: { id: v.id("experiences") },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     await ctx.db.delete(args.id);
   },
 });
@@ -64,6 +69,7 @@ export const addSkill = mutation({
     order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     const lastItem = await ctx.db.query("skills").order("desc").first();
     const newOrder = args.order ?? (lastItem?.order ?? 0) + 1;
     const id = await ctx.db.insert("skills", { ...args, order: newOrder });
@@ -81,6 +87,7 @@ export const updateSkill = mutation({
     order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     const { id, ...updates } = args;
     await ctx.db.patch(id, updates);
   },
@@ -91,6 +98,7 @@ export const reorderSkills = mutation({
     items: v.array(v.object({ id: v.id("skills"), order: v.number() })),
   },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     for (const item of args.items) {
       await ctx.db.patch(item.id, { order: item.order });
     }
@@ -100,6 +108,7 @@ export const reorderSkills = mutation({
 export const deleteSkill = mutation({
   args: { id: v.id("skills") },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     await ctx.db.delete(args.id);
   },
 });
@@ -121,6 +130,7 @@ export const addProject = mutation({
     order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     const lastItem = await ctx.db.query("projects").order("desc").first();
     const newOrder = args.order ?? (lastItem?.order ?? 0) + 1;
     const id = await ctx.db.insert("projects", { ...args, order: newOrder });
@@ -144,6 +154,7 @@ export const updateProject = mutation({
     order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     const { id, ...updates } = args;
     await ctx.db.patch(id, updates);
   },
@@ -154,6 +165,7 @@ export const reorderProjects = mutation({
     items: v.array(v.object({ id: v.id("projects"), order: v.number() })),
   },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     for (const item of args.items) {
       await ctx.db.patch(item.id, { order: item.order });
     }
@@ -163,6 +175,7 @@ export const reorderProjects = mutation({
 export const deleteProject = mutation({
   args: { id: v.id("projects") },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     await ctx.db.delete(args.id);
   },
 });
@@ -180,6 +193,7 @@ export const addBookmark = mutation({
     order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     const lastItem = await ctx.db.query("bookmarks").order("desc").first();
     const newOrder = args.order ?? (lastItem?.order ?? 0) + 1;
     const id = await ctx.db.insert("bookmarks", { ...args, order: newOrder });
@@ -200,6 +214,7 @@ export const updateBookmark = mutation({
     order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     const { id, ...updates } = args;
     await ctx.db.patch(id, updates);
   },
@@ -210,6 +225,7 @@ export const reorderBookmarks = mutation({
     items: v.array(v.object({ id: v.id("bookmarks"), order: v.number() })),
   },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     for (const item of args.items) {
       await ctx.db.patch(item.id, { order: item.order });
     }
@@ -219,6 +235,7 @@ export const reorderBookmarks = mutation({
 export const deleteBookmark = mutation({
   args: { id: v.id("bookmarks") },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     await ctx.db.delete(args.id);
   },
 });
@@ -235,6 +252,7 @@ export const addFeaturedCompany = mutation({
     highlights: v.array(v.string()),
   },
   handler: async (ctx, args) => {
+    await checkAdmin(ctx);
     const id = await ctx.db.insert("featuredCompany", args);
     return id;
   },
@@ -244,6 +262,7 @@ export const addFeaturedCompany = mutation({
 export const clearAllData = mutation({
   args: {},
   handler: async (ctx) => {
+    await checkAdmin(ctx);
     // Delete all experiences
     const experiences = await ctx.db.query("experiences").collect();
     for (const exp of experiences) {
@@ -269,5 +288,71 @@ export const clearAllData = mutation({
     }
 
     return "All data cleared";
+  },
+});
+
+export const logIntruder = mutation({
+  args: {
+    name: v.optional(v.string()),
+    email: v.string(),
+    image: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("intruders")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .first();
+
+    if (existing) {
+      await ctx.db.patch(existing._id, {
+        attempts: existing.attempts + 1,
+        lastAttempt: Date.now(),
+        name: args.name ?? existing.name,
+        image: args.image ?? existing.image,
+      });
+    } else {
+      await ctx.db.insert("intruders", {
+        email: args.email,
+        name: args.name,
+        image: args.image,
+        attempts: 1,
+        lastAttempt: Date.now(),
+      });
+    }
+  },
+});
+
+// Whitelist mutations
+export const addToWhitelist = mutation({
+  args: {
+    email: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const admin = await checkAdmin(ctx);
+    
+    const existing = await ctx.db
+      .query("whitelistedEmails")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .first();
+
+    if (existing) {
+      throw new Error("Email is already whitelisted");
+    }
+
+    await ctx.db.insert("whitelistedEmails", {
+      email: args.email,
+      addedBy: admin.email,
+      addedAt: Date.now(),
+    });
+  },
+});
+
+export const removeFromWhitelist = mutation({
+  args: {
+    id: v.id("whitelistedEmails"),
+  },
+  handler: async (ctx, args) => {
+    await checkAdmin(ctx);
+    await ctx.db.delete(args.id);
   },
 });

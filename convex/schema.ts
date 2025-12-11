@@ -67,4 +67,21 @@ export default defineSchema({
   })
     .index("by_category", ["category"])
     .index("by_order", ["order"]),
+
+  intruders: defineTable({
+    name: v.optional(v.string()),
+    email: v.string(),
+    image: v.optional(v.string()),
+    attempts: v.number(),
+    lastAttempt: v.number(),
+  })
+    .index("by_email", ["email"])
+    .index("by_attempts", ["attempts"]),
+
+  whitelistedEmails: defineTable({
+    email: v.string(),
+    addedBy: v.optional(v.string()), // email of admin who added them
+    addedAt: v.number(),
+  })
+    .index("by_email", ["email"]),
 });

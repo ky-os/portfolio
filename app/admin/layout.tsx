@@ -1,10 +1,13 @@
 "use client";
 
-import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
+import { Authenticated, Unauthenticated, AuthLoading, useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { SignIn } from "@/app/components/auth/SignIn";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
+import { api } from "@/convex/_generated/api";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 function AdminHeader() {
     const { signOut } = useAuthActions();
@@ -26,6 +29,32 @@ function AdminHeader() {
     );
 }
 
+function SecurityCheck({ children }: { children: React.ReactNode }) {
+    const isAdmin = useQuery(api.queries.isAdmin);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (isAdmin === false) {
+            router.push("/intruder");
+        }
+    }, [isAdmin, router]);
+
+    if (isAdmin === undefined) {
+         return (
+            <div className="flex h-screen items-center justify-center bg-black text-white flex-col gap-4">
+                <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="font-mono text-blue-400 text-sm">VERIFYING CLEARANCE...</div>
+            </div>
+        );
+    }
+
+    if (isAdmin === false) {
+        return null;
+    }
+
+    return <>{children}</>;
+}
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     return (
         <>
@@ -40,12 +69,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
             </Unauthenticated>
             <Authenticated>
-                <div className="min-h-screen bg-gray-950 text-white pt-20">
-                    <AdminHeader />
-                    <main className="p-6 max-w-7xl mx-auto">
-                        {children}
-                    </main>
-                </div>
+                <SecurityCheck>
+                    <div className="min-h-screen bg-gray-950 text-white pt-20">
+                        <AdminHeader />
+                        <main className="p-6 max-w-7xl mx-auto">
+                            {children}
+                        </main>
+                    </div>
+                </SecurityCheck>
             </Authenticated>
         </>
     );
