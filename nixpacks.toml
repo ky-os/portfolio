@@ -1,13 +1,29 @@
 # Nixpacks configuration for Next.js application
 
+buildImage = "ghcr.io/railwayapp/nixpacks:ubuntu-1745885067"
+
 [phases.setup]
+# Install Nix packages and enable caching for repeated builds
 nixPkgs = ["nodejs"]
+cacheDirectories = ["~/.npm", "~/.cache/nix"]
 
 [phases.install]
 cmds = ["npm ci --omit=dev"]
+cacheDirectories = ["~/.npm", "node_modules", "node_modules/.cache"]
+onlyIncludeFiles = ["package.json", "package-lock.json"]
 
 [phases.build]
-cmds = ["npx convex deploy", "npm run build"]
+cmds = ["npm run build"]
+cacheDirectories = [".next/cache", "node_modules/.cache"]
+onlyIncludeFiles = ["app/**", "components/**", "pages/**", "public/**", "package.json", "package-lock.json", "next.config.js"]
+
+[phases.convex-deploy]
+dependsOn = ["build"]
+# Only deploy Convex functions when convex-related files change, and keep package files available
+cmds = ["if git show --name-only --pretty=\"\" HEAD | grep -q '^convex/' ; then echo 'Convex related changes detected. Deploying Convex functions.' && npx convex deploy; else echo 'No Convex-related changes detected. Skipping Convex deploy.'; fi"]
+onlyIncludeFiles = ["convex/**", "package.json", "package-lock.json"]
 
 [start]
 cmd = "npm run start"
+runImage = "node:22-bullseye-slim"
+onlyIncludeFiles = [".next", "public", "package.json", "package-lock.json", "node_modules", "next.config.js"]
