@@ -363,13 +363,7 @@ export default defineSchema({
 - **Card Components**: Reusable Card, CardHeader, CardContent, CardFooter with motion
 
 ### Routing Structure
-- `/` - Home page with hero, experience, projects, tech stack sections
-- `/process` - Development process showcase
-- `/bookmarks` - Curated resource bookmarks
-- `/pet-debug` - Sprite debugging utility
-
-### State Management
-- **Local State**: React useState/useReducer for UI state
+### Routing Structure
 - **Server State**: Convex for persistent data (experiences, projects, bookmarks)
 - **Form State**: React Hook Form with Zod validation for any forms
 
@@ -425,7 +419,6 @@ portfolio/
 ├── app/                    # Next.js 15 App Router
 │   ├── api/               # API routes (if needed)
 │   ├── bookmarks/         # Bookmarks page
-│   ├── pet-debug/         # Debug utility page
 │   ├── process/           # Process showcase page
 │   ├── globals.css        # Global styles
 │   ├── layout.tsx         # Root layout
