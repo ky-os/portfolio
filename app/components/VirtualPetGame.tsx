@@ -227,9 +227,11 @@ export default function VirtualPetGame({
             pet.move(dir.unit().scale(pet.speed));
 
             if (pet.pos.dist(pet.target) < 10) {
-                onPetExitComplete(pet.id);
-                k.destroy(pet);
-                petsMapRef.current.delete(pet.id);
+                if (pet.id != null) {
+                    onPetExitComplete(pet.id as number);
+                    k.destroy(pet);
+                    petsMapRef.current.delete(pet.id as number);
+                }
             }
         });
 
@@ -241,9 +243,11 @@ export default function VirtualPetGame({
             pet.play("death");
 
             pet.wait(1, () => {
-                onPetExitComplete(pet.id);
-                k.destroy(pet);
-                petsMapRef.current.delete(pet.id);
+                if (pet.id != null) {
+                    onPetExitComplete(pet.id as number);
+                    k.destroy(pet);
+                    petsMapRef.current.delete(pet.id as number);
+                }
             });
         });
 
