@@ -16,11 +16,13 @@ export function ProjectList() {
     const reorderProjects = useMutation(api.mutations.reorderProjects);
     const [editingProject, setEditingProject] = useState<Doc<"projects"> | null>(null);
     const [isCreating, setIsCreating] = useState(false);
-    const [items, setItems] = useState<Doc<"projects">[]>([]);
+    const [workItems, setWorkItems] = useState<Doc<"projects">[]>([]);
+    const [personalItems, setPersonalItems] = useState<Doc<"projects">[]>([]);
 
     React.useEffect(() => {
         if (projects) {
-            setItems(projects);
+            setWorkItems(projects.filter(p => p.category === "work"));
+            setPersonalItems(projects.filter(p => p.category === "personal"));
         }
     }, [projects]);
 
@@ -35,7 +37,7 @@ export function ProjectList() {
         }
     };
 
-    const handleDragEnd = async () => {
+    const handleDragEnd = async (items: Doc<"projects">[]) => {
         const updates = items.map((project, index) => ({
             id: project._id,
             order: items.length - index
@@ -68,51 +70,83 @@ export function ProjectList() {
                 </button>
             </div>
 
-            <Reorder.Group axis="y" values={items} onReorder={setItems} className="flex flex-col gap-4">
-                {items.map((project) => (
-                    <Reorder.Item key={project._id} value={project} onDragEnd={handleDragEnd}>
-                        <Card delay={0} className="group relative">
-                            <CardContent className="flex justify-between items-center p-5 pl-12">
-                                <div className="absolute left-4 top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing text-gray-600 hover:text-gray-400 p-2">
-                                    <GripVertical size={20} />
-                                </div>
-                                <div>
-                                    <h3 className="font-bold text-white text-lg group-hover:text-blue-400 transition-colors">{project.title}</h3>
-                                    <p className="text-sm text-gray-400 mt-1">{project.role} • {project.category}</p>
-                                </div>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => setEditingProject(project)}
-                                        className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
-                                        title="Edit"
-                                    >
-                                        <Edit size={18} />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(project._id)}
-                                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                                        title="Delete"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </Reorder.Item>
-                ))}
+            <div className="space-y-8">
+                <div>
+                    <h3 className="text-xl font-bold text-white mb-4">Work Projects</h3>
+                    <Reorder.Group axis="y" values={workItems} onReorder={setWorkItems} className="flex flex-col gap-4">
+                        {workItems.map((project) => (
+                            <Reorder.Item key={project._id} value={project} onDragEnd={() => handleDragEnd(workItems)}>
+                                <Card delay={0} className="group relative">
+                                    <CardContent className="flex justify-between items-center p-5 pl-12">
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing text-gray-600 hover:text-gray-400 p-2">
+                                            <GripVertical size={20} />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-white text-lg group-hover:text-blue-400 transition-colors">{project.title}</h3>
+                                            <p className="text-sm text-gray-400 mt-1">{project.role} • {project.category}</p>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => setEditingProject(project)}
+                                                className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                                                title="Edit"
+                                            >
+                                                <Edit size={18} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(project._id)}
+                                                className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                                                title="Delete"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </Reorder.Item>
+                        ))}
+                        {workItems.length === 0 && <p className="text-gray-500 italic">No work projects.</p>}
+                    </Reorder.Group>
+                </div>
 
-                {items.length === 0 && (
-                    <div className="text-center py-16 text-gray-500 bg-gray-900/30 rounded-xl border border-gray-800 border-dashed">
-                        <p>No projects found.</p>
-                        <button
-                            onClick={() => setIsCreating(true)}
-                            className="text-blue-400 hover:text-blue-300 mt-2 font-medium"
-                        >
-                            Create your first project
-                        </button>
-                    </div>
-                )}
-            </Reorder.Group>
+                <div>
+                    <h3 className="text-xl font-bold text-white mb-4">Personal Projects</h3>
+                    <Reorder.Group axis="y" values={personalItems} onReorder={setPersonalItems} className="flex flex-col gap-4">
+                        {personalItems.map((project) => (
+                            <Reorder.Item key={project._id} value={project} onDragEnd={() => handleDragEnd(personalItems)}>
+                                <Card delay={0} className="group relative">
+                                    <CardContent className="flex justify-between items-center p-5 pl-12">
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing text-gray-600 hover:text-gray-400 p-2">
+                                            <GripVertical size={20} />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-white text-lg group-hover:text-blue-400 transition-colors">{project.title}</h3>
+                                            <p className="text-sm text-gray-400 mt-1">{project.role} • {project.category}</p>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => setEditingProject(project)}
+                                                className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                                                title="Edit"
+                                            >
+                                                <Edit size={18} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(project._id)}
+                                                className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                                                title="Delete"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </Reorder.Item>
+                        ))}
+                        {personalItems.length === 0 && <p className="text-gray-500 italic">No personal projects.</p>}
+                    </Reorder.Group>
+                </div>
+            </div>
         </div>
     );
 }

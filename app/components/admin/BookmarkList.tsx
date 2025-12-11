@@ -16,11 +16,20 @@ export function BookmarkList() {
     const reorderBookmarks = useMutation(api.mutations.reorderBookmarks);
     const [editingBookmark, setEditingBookmark] = useState<Doc<"bookmarks"> | null>(null);
     const [isCreating, setIsCreating] = useState(false);
-    const [items, setItems] = useState<Doc<"bookmarks">[]>([]);
+    const [groupedItems, setGroupedItems] = useState<Record<string, Doc<"bookmarks">[]>>({});
+    const [categories, setCategories] = useState<string[]>([]);
 
     React.useEffect(() => {
         if (bookmarks) {
-            setItems(bookmarks);
+            const groups: Record<string, Doc<"bookmarks">[]> = {};
+            bookmarks.forEach(bm => {
+                if (!groups[bm.category]) {
+                    groups[bm.category] = [];
+                }
+                groups[bm.category].push(bm);
+            });
+            setGroupedItems(groups);
+            setCategories(Object.keys(groups).sort());
         }
     }, [bookmarks]);
 
@@ -35,7 +44,7 @@ export function BookmarkList() {
         }
     };
 
-    const handleDragEnd = async () => {
+    const handleDragEnd = async (items: Doc<"bookmarks">[]) => {
         const updates = items.map((bm, index) => ({
             id: bm._id,
             order: items.length - index
@@ -68,40 +77,52 @@ export function BookmarkList() {
                 </button>
             </div>
 
-            <Reorder.Group axis="y" values={items} onReorder={setItems} className="flex flex-col gap-4">
-                {items.map((bookmark) => (
-                    <Reorder.Item key={bookmark._id} value={bookmark} onDragEnd={handleDragEnd}>
-                        <Card delay={0} className="group relative">
-                            <CardContent className="flex justify-between items-center p-5 pl-12">
-                                <div className="absolute left-4 top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing text-gray-600 hover:text-gray-400 p-2">
-                                    <GripVertical size={20} />
-                                </div>
-                                <div>
-                                    <h3 className="font-bold text-white text-lg group-hover:text-blue-400 transition-colors">{bookmark.title}</h3>
-                                    <p className="text-sm text-gray-400 mt-1">{bookmark.category}</p>
-                                </div>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => setEditingBookmark(bookmark)}
-                                        className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
-                                        title="Edit"
-                                    >
-                                        <Edit size={18} />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(bookmark._id)}
-                                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                                        title="Delete"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </Reorder.Item>
+            <div className="space-y-8">
+                {categories.map((category) => (
+                    <div key={category}>
+                        <h3 className="text-xl font-bold text-white mb-4 capitalize">{category}</h3>
+                        <Reorder.Group
+                            axis="y"
+                            values={groupedItems[category]}
+                            onReorder={(newItems) => setGroupedItems({ ...groupedItems, [category]: newItems })}
+                            className="flex flex-col gap-4"
+                        >
+                            {groupedItems[category].map((bookmark) => (
+                                <Reorder.Item key={bookmark._id} value={bookmark} onDragEnd={() => handleDragEnd(groupedItems[category])}>
+                                    <Card delay={0} className="group relative">
+                                        <CardContent className="flex justify-between items-center p-5 pl-12">
+                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing text-gray-600 hover:text-gray-400 p-2">
+                                                <GripVertical size={20} />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-white text-lg group-hover:text-blue-400 transition-colors">{bookmark.title}</h3>
+                                                <p className="text-sm text-gray-400 mt-1">{bookmark.category}</p>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => setEditingBookmark(bookmark)}
+                                                    className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                                                    title="Edit"
+                                                >
+                                                    <Edit size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(bookmark._id)}
+                                                    className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                                                    title="Delete"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </Reorder.Item>
+                            ))}
+                        </Reorder.Group>
+                    </div>
                 ))}
 
-                {items.length === 0 && (
+                {categories.length === 0 && (
                     <div className="text-center py-16 text-gray-500 bg-gray-900/30 rounded-xl border border-gray-800 border-dashed">
                         <p>No bookmarks found.</p>
                         <button
@@ -112,7 +133,7 @@ export function BookmarkList() {
                         </button>
                     </div>
                 )}
-            </Reorder.Group>
+            </div>
         </div>
     );
 }
