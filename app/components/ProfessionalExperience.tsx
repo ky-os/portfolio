@@ -32,7 +32,7 @@ export default function ProfessionalExperience({ experiences }: ProfessionalExpe
                                     </div>
                                 ) : (
                                     <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 font-bold text-gray-400 text-xl group-hover:border-blue-500/30 group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-colors">
-                                        {company.name.substring(0, 2).toUpperCase()}
+                                        {company.initials || company.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()}
                                     </div>
                                 )}
                             </div>
