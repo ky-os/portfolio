@@ -4,7 +4,7 @@
 nixPkgs = ["nodejs"]
 
 [phases.install]
-cmds = ["npm ci"]
+cmds = ["npm ci --omit=dev"]
 
 [phases.build]
 cmds = ["npx convex deploy", "npm run build"]
