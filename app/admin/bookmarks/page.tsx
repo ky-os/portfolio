@@ -4,8 +4,12 @@ import { api } from "@/convex/_generated/api";
 import { BookmarkList } from "@/app/components/admin/BookmarkList";
 import { SectionHeader } from "@/app/components/ui/SectionHeader";
 
+import { getAuthToken } from '@/lib/get-auth-token';
+
 export default async function BookmarksPage() {
-    const preloadedBookmarks = await preloadQuery(api.queries.getBookmarks);
+    const token = await getAuthToken();
+
+    const preloadedBookmarks = await preloadQuery(api.queries.getBookmarks, undefined, { token });
 
     return (
         <div>

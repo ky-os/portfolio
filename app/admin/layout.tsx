@@ -14,7 +14,7 @@ function AdminHeader() {
     return (
         <header className="fixed top-0 left-0 right-0 z-50 bg-gray-950/80 backdrop-blur-md border-b border-gray-800">
             <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                <Link href="/admin" className="text-xl font-bold text-white tracking-tight hover:text-blue-400 transition-colors">
+                <Link href="/admin" className="text-xl font-bold text-white tracking-tight hover:text-blue-400 transition-colors" prefetch={false}>
                     Admin<span className="text-blue-500">.</span>
                 </Link>
                 <button
@@ -40,7 +40,7 @@ function SecurityCheck({ children }: { children: React.ReactNode }) {
     }, [isAdmin, router]);
 
     if (isAdmin === undefined) {
-         return (
+        return (
             <div className="flex h-screen items-center justify-center bg-black text-white flex-col gap-4">
                 <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                 <div className="font-mono text-blue-400 text-sm">VERIFYING CLEARANCE...</div>
