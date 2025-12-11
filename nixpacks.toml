@@ -15,7 +15,7 @@ onlyIncludeFiles = ["package.json", "package-lock.json"]
 [phases.build]
 cmds = ["npm run build"]
 cacheDirectories = [".next/cache", "node_modules/.cache"]
-onlyIncludeFiles = ["app/**", "components/**", "pages/**", "public/**", "package.json", "package-lock.json", "next.config.js"]
+
 
 [phases.convex-deploy]
 dependsOn = ["build"]
@@ -26,4 +26,4 @@ onlyIncludeFiles = ["convex/**", "package.json", "package-lock.json"]
 [start]
 cmd = "npm run start"
 runImage = "node:22-bullseye-slim"
-onlyIncludeFiles = [".next", "public", "package.json", "package-lock.json", "node_modules", "next.config.js"]
+onlyIncludeFiles = [".next", "public", "package.json", "package-lock.json"]
