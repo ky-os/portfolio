@@ -329,18 +329,18 @@ export default function VirtualPetGame({
         };
 
         // Dog 1
-        k.loadSprite("dog1_walk", "/pet/1 Dog/Walk.png", walkSliceConfig);
-        k.loadSprite("dog1_sit", "/pet/1 Dog/Idle.png", idleSliceConfig);
-        k.loadSprite("dog1_play", "/pet/1 Dog/Attack.png", attackSliceConfig);
-        k.loadSprite("dog1_death", "/pet/1 Dog/Death.png", deathSliceConfig);
-        k.loadSprite("dog1_hurt", "/pet/1 Dog/Hurt.png", hurtSliceConfig);
+        k.loadSprite("dog1_walk", encodeURI("/pet/dog-1/Walk.png"), walkSliceConfig);
+        k.loadSprite("dog1_sit", encodeURI("/pet/dog-1/Idle.png"), idleSliceConfig);
+        k.loadSprite("dog1_play", encodeURI("/pet/dog-1/Attack.png"), attackSliceConfig);
+        k.loadSprite("dog1_death", encodeURI("/pet/dog-1/Death.png"), deathSliceConfig);
+        k.loadSprite("dog1_hurt", encodeURI("/pet/dog-1/Hurt.png"), hurtSliceConfig);
 
         // Dog 2
-        k.loadSprite("dog2_walk", "/pet/2 Dog 2/Walk.png", walkSliceConfig);
-        k.loadSprite("dog2_sit", "/pet/2 Dog 2/Idle.png", idleSliceConfig);
-        k.loadSprite("dog2_play", "/pet/2 Dog 2/Attack.png", attackSliceConfig);
-        k.loadSprite("dog2_death", "/pet/2 Dog 2/Death.png", deathSliceConfig);
-        k.loadSprite("dog2_hurt", "/pet/2 Dog 2/Hurt.png", hurtSliceConfig);
+        k.loadSprite("dog2_walk", encodeURI("/pet/dog-2/Walk.png"), walkSliceConfig);
+        k.loadSprite("dog2_sit", encodeURI("/pet/dog-2/Idle.png"), idleSliceConfig);
+        k.loadSprite("dog2_play", encodeURI("/pet/dog-2/Attack.png"), attackSliceConfig);
+        k.loadSprite("dog2_death", encodeURI("/pet/dog-2/Death.png"), deathSliceConfig);
+        k.loadSprite("dog2_hurt", encodeURI("/pet/dog-2/Hurt.png"), hurtSliceConfig);
 
         // Create Hearts for Health Bar
         const hearts: GameObj[] = [];
