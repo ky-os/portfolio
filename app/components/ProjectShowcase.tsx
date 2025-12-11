@@ -10,6 +10,7 @@ import TechnologiesAndTools from "./TechnologiesAndTools";
 import Navbar from "./Navbar";
 import ProjectCard from "./ProjectCard";
 import { SectionHeader } from "./ui/SectionHeader";
+import { Footer } from "./ui/Footer";
 
 interface ProjectShowcaseProps {
     preloadedProjects: Preloaded<typeof api.queries.getProjects>;
@@ -18,11 +19,11 @@ interface ProjectShowcaseProps {
     preloadedSkills: Preloaded<typeof api.queries.getSkills>;
 }
 
-export default function ProjectShowcase({ 
-    preloadedProjects, 
-    preloadedFeaturedCompany, 
-    preloadedExperiences, 
-    preloadedSkills 
+export default function ProjectShowcase({
+    preloadedProjects,
+    preloadedFeaturedCompany,
+    preloadedExperiences,
+    preloadedSkills
 }: ProjectShowcaseProps) {
     const projects = usePreloadedQuery(preloadedProjects);
     const featuredCompany = usePreloadedQuery(preloadedFeaturedCompany);
@@ -336,6 +337,7 @@ export default function ProjectShowcase({
                     </div>
                 </section>
             </main>
+            <Footer />
         </div>
     );
 }

@@ -1,9 +1,10 @@
 "use client";
 
 import { useAuthActions } from "@convex-dev/auth/react";
-import { Lock, Fingerprint, Loader2, Terminal } from "lucide-react";
+import { Lock, Fingerprint, Loader2, Terminal, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import Link from "next/link";
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -53,6 +54,17 @@ export function SignIn() {
   };
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-md mx-auto perspective-1000">
+      {/* Back Button */}
+      <div className="w-full mb-8">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-300 transition-colors text-sm font-mono group"
+        >
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+          Back to Portfolio
+        </Link>
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
