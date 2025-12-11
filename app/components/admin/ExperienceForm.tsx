@@ -5,6 +5,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { X } from "lucide-react";
+import { Card } from "../ui/Card";
 
 interface ExperienceFormProps {
     initialData: Doc<"experiences"> | null;
@@ -45,7 +46,7 @@ export function ExperienceForm({ initialData, onClose }: ExperienceFormProps) {
     };
 
     return (
-        <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+        <Card hoverEffect={false} className="p-6">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold text-white">
                     {initialData ? "Edit Experience" : "New Experience"}
@@ -146,7 +147,7 @@ export function ExperienceForm({ initialData, onClose }: ExperienceFormProps) {
                     </button>
                 </div>
             </form>
-        </div>
+        </Card>
     );
 }
 

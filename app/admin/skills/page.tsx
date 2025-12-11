@@ -1,13 +1,15 @@
 import React from "react";
 import { SkillList } from "@/app/components/admin/SkillList";
+import { SectionHeader } from "@/app/components/ui/SectionHeader";
 
 export default function SkillsPage() {
     return (
         <div>
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-white mb-2">Skills</h1>
-                <p className="text-gray-400">Manage technical skills and tools.</p>
-            </div>
+            <SectionHeader
+                title="Skills"
+                subtitle="Manage technical skills and tools."
+                className="mb-8"
+            />
             <SkillList />
         </div>
     );

@@ -1,13 +1,15 @@
 import React from "react";
 import { ProjectList } from "@/app/components/admin/ProjectList";
+import { SectionHeader } from "@/app/components/ui/SectionHeader";
 
 export default function ProjectsPage() {
     return (
         <div>
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-white mb-2">Projects</h1>
-                <p className="text-gray-400">Manage your portfolio projects and case studies.</p>
-            </div>
+            <SectionHeader
+                title="Projects"
+                subtitle="Manage your portfolio projects and case studies."
+                className="mb-8"
+            />
             <ProjectList />
         </div>
     );

@@ -6,6 +6,7 @@ import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { Edit, Trash2, Plus } from "lucide-react";
 import { SkillForm } from "./SkillForm";
+import { Card, CardContent } from "../ui/Card";
 
 export function SkillList() {
     const skills = useQuery(api.queries.getSkills);
@@ -14,7 +15,7 @@ export function SkillList() {
     const [isCreating, setIsCreating] = useState(false);
 
     if (!skills) {
-        return <div className="text-gray-400">Loading skills...</div>;
+        return <div className="text-gray-400 animate-pulse">Loading skills...</div>;
     }
 
     const handleDelete = async (id: Doc<"skills">["_id"]) => {
@@ -37,11 +38,10 @@ export function SkillList() {
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold text-white">Skills</h2>
+            <div className="flex justify-end mb-6">
                 <button
                     onClick={() => setIsCreating(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all shadow-lg shadow-blue-500/20 font-medium"
                 >
                     <Plus size={18} />
                     Add Skill Category
@@ -49,32 +49,42 @@ export function SkillList() {
             </div>
 
             <div className="grid gap-4">
-                {skills.map((skill) => (
-                    <div key={skill._id} className="p-4 bg-gray-800 rounded-xl border border-gray-700 flex justify-between items-center">
-                        <div>
-                            <h3 className="font-bold text-white capitalize">{skill.category}</h3>
-                            <p className="text-sm text-gray-400">{skill.items.length} items</p>
-                        </div>
-                        <div className="flex gap-2">
-                            <button
-                                onClick={() => setEditingSkill(skill)}
-                                className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
-                            >
-                                <Edit size={18} />
-                            </button>
-                            <button
-                                onClick={() => handleDelete(skill._id)}
-                                className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                            >
-                                <Trash2 size={18} />
-                            </button>
-                        </div>
-                    </div>
+                {skills.map((skill, index) => (
+                    <Card key={skill._id} delay={index * 0.05} className="group">
+                        <CardContent className="flex justify-between items-center p-5">
+                            <div>
+                                <h3 className="font-bold text-white text-lg capitalize group-hover:text-blue-400 transition-colors">{skill.category}</h3>
+                                <p className="text-sm text-gray-400 mt-1">{skill.items.length} items</p>
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setEditingSkill(skill)}
+                                    className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                                    title="Edit"
+                                >
+                                    <Edit size={18} />
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(skill._id)}
+                                    className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                                    title="Delete"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                            </div>
+                        </CardContent>
+                    </Card>
                 ))}
 
                 {skills.length === 0 && (
-                    <div className="text-center py-12 text-gray-500 bg-gray-800/50 rounded-xl border border-gray-800 border-dashed">
-                        No skills found. Create one to get started.
+                    <div className="text-center py-16 text-gray-500 bg-gray-900/30 rounded-xl border border-gray-800 border-dashed">
+                        <p>No skills found.</p>
+                        <button
+                            onClick={() => setIsCreating(true)}
+                            className="text-blue-400 hover:text-blue-300 mt-2 font-medium"
+                        >
+                            Create your first skill category
+                        </button>
                     </div>
                 )}
             </div>

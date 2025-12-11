@@ -3,60 +3,73 @@
 import React from "react";
 import Link from "next/link";
 import { Briefcase, Code, Bookmark, Layers } from "lucide-react";
+import { Card, CardContent } from "../components/ui/Card";
+import { SectionHeader } from "../components/ui/SectionHeader";
 
 export default function AdminDashboard() {
     return (
         <div>
-            <h2 className="text-2xl font-bold mb-4">Welcome back</h2>
-            <p className="text-gray-400">Select a section to manage your content.</p>
+            <SectionHeader
+                title="Welcome back"
+                subtitle="Select a section to manage your content."
+                className="mb-8"
+            />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-                <Link href="/admin/projects" className="block">
-                    <div className="p-6 bg-gray-800 rounded-xl border border-gray-700 hover:border-blue-500/50 transition-colors cursor-pointer h-full">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400">
-                                <Briefcase size={24} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Link href="/admin/projects" className="block group">
+                    <Card className="h-full border-gray-800 hover:border-blue-500/50 transition-colors">
+                        <CardContent className="flex flex-col items-start gap-4">
+                            <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400 group-hover:scale-110 transition-transform duration-300">
+                                <Briefcase size={28} />
                             </div>
-                            <h3 className="text-lg font-bold">Projects</h3>
-                        </div>
-                        <p className="text-gray-400 text-sm">Manage your portfolio projects and case studies.</p>
-                    </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">Projects</h3>
+                                <p className="text-gray-400 text-sm leading-relaxed">Manage your portfolio projects and case studies.</p>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </Link>
 
-                <Link href="/admin/experience" className="block">
-                    <div className="p-6 bg-gray-800 rounded-xl border border-gray-700 hover:border-purple-500/50 transition-colors cursor-pointer h-full">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400">
-                                <Layers size={24} />
+                <Link href="/admin/experience" className="block group">
+                    <Card className="h-full border-gray-800 hover:border-purple-500/50 transition-colors" delay={0.1}>
+                        <CardContent className="flex flex-col items-start gap-4">
+                            <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400 group-hover:scale-110 transition-transform duration-300">
+                                <Layers size={28} />
                             </div>
-                            <h3 className="text-lg font-bold">Experience</h3>
-                        </div>
-                        <p className="text-gray-400 text-sm">Update your work history and career timeline.</p>
-                    </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">Experience</h3>
+                                <p className="text-gray-400 text-sm leading-relaxed">Update your work history and career timeline.</p>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </Link>
 
-                <Link href="/admin/bookmarks" className="block">
-                    <div className="p-6 bg-gray-800 rounded-xl border border-gray-700 hover:border-green-500/50 transition-colors cursor-pointer h-full">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="p-2 bg-green-500/10 rounded-lg text-green-400">
-                                <Bookmark size={24} />
+                <Link href="/admin/bookmarks" className="block group">
+                    <Card className="h-full border-gray-800 hover:border-green-500/50 transition-colors" delay={0.2}>
+                        <CardContent className="flex flex-col items-start gap-4">
+                            <div className="p-3 bg-green-500/10 rounded-xl text-green-400 group-hover:scale-110 transition-transform duration-300">
+                                <Bookmark size={28} />
                             </div>
-                            <h3 className="text-lg font-bold">Bookmarks</h3>
-                        </div>
-                        <p className="text-gray-400 text-sm">Curate your reading list and resources.</p>
-                    </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-white mb-1 group-hover:text-green-400 transition-colors">Bookmarks</h3>
+                                <p className="text-gray-400 text-sm leading-relaxed">Curate your reading list and resources.</p>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </Link>
 
-                <Link href="/admin/skills" className="block">
-                    <div className="p-6 bg-gray-800 rounded-xl border border-gray-700 hover:border-orange-500/50 transition-colors cursor-pointer h-full">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="p-2 bg-orange-500/10 rounded-lg text-orange-400">
-                                <Code size={24} />
+                <Link href="/admin/skills" className="block group">
+                    <Card className="h-full border-gray-800 hover:border-orange-500/50 transition-colors" delay={0.3}>
+                        <CardContent className="flex flex-col items-start gap-4">
+                            <div className="p-3 bg-orange-500/10 rounded-xl text-orange-400 group-hover:scale-110 transition-transform duration-300">
+                                <Code size={28} />
                             </div>
-                            <h3 className="text-lg font-bold">Skills</h3>
-                        </div>
-                        <p className="text-gray-400 text-sm">Manage technical skills and tools.</p>
-                    </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-white mb-1 group-hover:text-orange-400 transition-colors">Skills</h3>
+                                <p className="text-gray-400 text-sm leading-relaxed">Manage technical skills and tools.</p>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </Link>
             </div>
         </div>

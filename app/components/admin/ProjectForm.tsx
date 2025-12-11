@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { X, Plus, Trash } from "lucide-react";
+import { Card } from "../ui/Card";
 
 interface ProjectFormProps {
     initialData: Doc<"projects"> | null;
@@ -81,7 +82,7 @@ export function ProjectForm({ initialData, onClose }: ProjectFormProps) {
     };
 
     return (
-        <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+        <Card hoverEffect={false} className="p-6">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold text-white">
                     {initialData ? "Edit Project" : "New Project"}
@@ -262,7 +263,7 @@ export function ProjectForm({ initialData, onClose }: ProjectFormProps) {
                     </button>
                 </div>
             </form>
-        </div>
+        </Card>
     );
 }
 
