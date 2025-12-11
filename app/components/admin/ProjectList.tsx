@@ -4,15 +4,25 @@ import React, { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
-import { Edit, Trash2, Plus } from "lucide-react";
+import { Edit, Trash2, Plus, GripVertical } from "lucide-react";
 import { ProjectForm } from "./ProjectForm";
 import { Card, CardContent } from "../ui/Card";
+import { Reorder } from "framer-motion";
+import { revalidateHome } from "@/app/actions";
 
 export function ProjectList() {
     const projects = useQuery(api.queries.getProjects);
     const deleteProject = useMutation(api.mutations.deleteProject);
+    const reorderProjects = useMutation(api.mutations.reorderProjects);
     const [editingProject, setEditingProject] = useState<Doc<"projects"> | null>(null);
     const [isCreating, setIsCreating] = useState(false);
+    const [items, setItems] = useState<Doc<"projects">[]>([]);
+
+    React.useEffect(() => {
+        if (projects) {
+            setItems(projects);
+        }
+    }, [projects]);
 
     if (!projects) {
         return <div className="text-gray-400 animate-pulse">Loading projects...</div>;
@@ -21,7 +31,17 @@ export function ProjectList() {
     const handleDelete = async (id: Doc<"projects">["_id"]) => {
         if (confirm("Are you sure you want to delete this project?")) {
             await deleteProject({ id });
+            await revalidateHome();
         }
+    };
+
+    const handleDragEnd = async () => {
+        const updates = items.map((project, index) => ({
+            id: project._id,
+            order: items.length - index
+        }));
+        await reorderProjects({ items: updates });
+        await revalidateHome();
     };
 
     if (isCreating || editingProject) {
@@ -48,35 +68,40 @@ export function ProjectList() {
                 </button>
             </div>
 
-            <div className="grid gap-4">
-                {projects.map((project, index) => (
-                    <Card key={project._id} delay={index * 0.05} className="group">
-                        <CardContent className="flex justify-between items-center p-5">
-                            <div>
-                                <h3 className="font-bold text-white text-lg group-hover:text-blue-400 transition-colors">{project.title}</h3>
-                                <p className="text-sm text-gray-400 mt-1">{project.role} • {project.category}</p>
-                            </div>
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => setEditingProject(project)}
-                                    className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
-                                    title="Edit"
-                                >
-                                    <Edit size={18} />
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(project._id)}
-                                    className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                                    title="Delete"
-                                >
-                                    <Trash2 size={18} />
-                                </button>
-                            </div>
-                        </CardContent>
-                    </Card>
+            <Reorder.Group axis="y" values={items} onReorder={setItems} className="flex flex-col gap-4">
+                {items.map((project) => (
+                    <Reorder.Item key={project._id} value={project} onDragEnd={handleDragEnd}>
+                        <Card delay={0} className="group relative">
+                            <CardContent className="flex justify-between items-center p-5 pl-12">
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing text-gray-600 hover:text-gray-400 p-2">
+                                    <GripVertical size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-white text-lg group-hover:text-blue-400 transition-colors">{project.title}</h3>
+                                    <p className="text-sm text-gray-400 mt-1">{project.role} • {project.category}</p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => setEditingProject(project)}
+                                        className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                                        title="Edit"
+                                    >
+                                        <Edit size={18} />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(project._id)}
+                                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                                        title="Delete"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </Reorder.Item>
                 ))}
 
-                {projects.length === 0 && (
+                {items.length === 0 && (
                     <div className="text-center py-16 text-gray-500 bg-gray-900/30 rounded-xl border border-gray-800 border-dashed">
                         <p>No projects found.</p>
                         <button
@@ -87,7 +112,7 @@ export function ProjectList() {
                         </button>
                     </div>
                 )}
-            </div>
+            </Reorder.Group>
         </div>
     );
 }

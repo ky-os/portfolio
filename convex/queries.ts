@@ -4,14 +4,22 @@ import { v } from "convex/values";
 export const getExperiences = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("experiences").collect();
+    return await ctx.db
+      .query("experiences")
+      .withIndex("by_order")
+      .order("desc")
+      .collect();
   },
 });
 
 export const getProjects = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("projects").collect();
+    return await ctx.db
+      .query("projects")
+      .withIndex("by_order")
+      .order("desc")
+      .collect();
   },
 });
 
@@ -28,7 +36,11 @@ export const getProjectsByCategory = query({
 export const getBookmarks = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("bookmarks").collect();
+    return await ctx.db
+      .query("bookmarks")
+      .withIndex("by_order")
+      .order("desc")
+      .collect();
   },
 });
 
@@ -53,6 +65,10 @@ export const getFeaturedCompany = query({
 export const getSkills = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("skills").collect();
+    return await ctx.db
+      .query("skills")
+      .withIndex("by_order")
+      .order("desc")
+      .collect();
   },
 });

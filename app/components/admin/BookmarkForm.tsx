@@ -5,6 +5,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { X, Plus, Trash } from "lucide-react";
+import { revalidateHome } from "@/app/actions";
 import { Card } from "../ui/Card";
 
 interface BookmarkFormProps {
@@ -47,6 +48,7 @@ export function BookmarkForm({ initialData, onClose }: BookmarkFormProps) {
             } else {
                 await addBookmark(bookmarkData);
             }
+            await revalidateHome();
             onClose();
         } catch (error) {
             console.error("Failed to save bookmark:", error);

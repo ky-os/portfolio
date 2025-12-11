@@ -5,6 +5,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { X } from "lucide-react";
+import { revalidateHome } from "@/app/actions";
 import { Card } from "../ui/Card";
 
 interface ExperienceFormProps {
@@ -38,6 +39,7 @@ export function ExperienceForm({ initialData, onClose }: ExperienceFormProps) {
             } else {
                 await addExperience(formData);
             }
+            await revalidateHome();
             onClose();
         } catch (error) {
             console.error("Failed to save experience:", error);

@@ -1,7 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
+import { preloadQuery } from "convex/nextjs";
 import ProjectShowcase from "./components/ProjectShowcase";
-import { convex } from "@/lib/convex";
 import { api } from "../convex/_generated/api";
 
 export const metadata: Metadata = {
@@ -9,21 +9,17 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const projects = await convex.query(api.queries.getProjects);
-  const featuredCompany = await convex.query(api.queries.getFeaturedCompany);
-  const experiences = await convex.query(api.queries.getExperiences);
-  const skills = await convex.query(api.queries.getSkills);
-
-  if (!featuredCompany) {
-    return <div>Error: Featured company data missing. Please seed the database.</div>;
-  }
+  const preloadedProjects = await preloadQuery(api.queries.getProjects);
+  const preloadedFeaturedCompany = await preloadQuery(api.queries.getFeaturedCompany);
+  const preloadedExperiences = await preloadQuery(api.queries.getExperiences);
+  const preloadedSkills = await preloadQuery(api.queries.getSkills);
 
   return (
     <ProjectShowcase
-      projects={projects}
-      featuredCompany={featuredCompany}
-      experiences={experiences}
-      skills={skills}
+      preloadedProjects={preloadedProjects}
+      preloadedFeaturedCompany={preloadedFeaturedCompany}
+      preloadedExperiences={preloadedExperiences}
+      preloadedSkills={preloadedSkills}
     />
   );
 }

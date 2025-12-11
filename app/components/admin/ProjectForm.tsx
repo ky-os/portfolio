@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { X, Plus, Trash } from "lucide-react";
+import { revalidateHome } from "@/app/actions";
 import { Card } from "../ui/Card";
 
 interface ProjectFormProps {
@@ -54,6 +55,7 @@ export function ProjectForm({ initialData, onClose }: ProjectFormProps) {
             } else {
                 await addProject(projectData);
             }
+            await revalidateHome();
             onClose();
         } catch (error) {
             console.error("Failed to save project:", error);

@@ -11,9 +11,12 @@ export const addExperience = mutation({
     url: v.string(),
     description: v.string(),
     initials: v.optional(v.string()),
+    order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const id = await ctx.db.insert("experiences", args);
+    const lastItem = await ctx.db.query("experiences").order("desc").first();
+    const newOrder = args.order ?? (lastItem?.order ?? 0) + 1;
+    const id = await ctx.db.insert("experiences", { ...args, order: newOrder });
     return id;
   },
 });
@@ -27,10 +30,22 @@ export const updateExperience = mutation({
     logo: v.optional(v.string()),
     url: v.optional(v.string()),
     description: v.optional(v.string()),
+    order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
     await ctx.db.patch(id, updates);
+  },
+});
+
+export const reorderExperiences = mutation({
+  args: {
+    items: v.array(v.object({ id: v.id("experiences"), order: v.number() })),
+  },
+  handler: async (ctx, args) => {
+    for (const item of args.items) {
+      await ctx.db.patch(item.id, { order: item.order });
+    }
   },
 });
 
@@ -46,9 +61,12 @@ export const addSkill = mutation({
   args: {
     category: v.string(),
     items: v.array(v.object({ name: v.string(), icon: v.string() })),
+    order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const id = await ctx.db.insert("skills", args);
+    const lastItem = await ctx.db.query("skills").order("desc").first();
+    const newOrder = args.order ?? (lastItem?.order ?? 0) + 1;
+    const id = await ctx.db.insert("skills", { ...args, order: newOrder });
     return id;
   },
 });
@@ -60,10 +78,22 @@ export const updateSkill = mutation({
     items: v.optional(
       v.array(v.object({ name: v.string(), icon: v.string() }))
     ),
+    order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
     await ctx.db.patch(id, updates);
+  },
+});
+
+export const reorderSkills = mutation({
+  args: {
+    items: v.array(v.object({ id: v.id("skills"), order: v.number() })),
+  },
+  handler: async (ctx, args) => {
+    for (const item of args.items) {
+      await ctx.db.patch(item.id, { order: item.order });
+    }
   },
 });
 
@@ -88,9 +118,12 @@ export const addProject = mutation({
     logo: v.optional(v.string()),
     xp: v.optional(v.number()),
     category: v.union(v.literal("work"), v.literal("personal")),
+    order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const id = await ctx.db.insert("projects", args);
+    const lastItem = await ctx.db.query("projects").order("desc").first();
+    const newOrder = args.order ?? (lastItem?.order ?? 0) + 1;
+    const id = await ctx.db.insert("projects", { ...args, order: newOrder });
     return id;
   },
 });
@@ -108,10 +141,22 @@ export const updateProject = mutation({
     logo: v.optional(v.string()),
     xp: v.optional(v.number()),
     category: v.optional(v.union(v.literal("work"), v.literal("personal"))),
+    order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
     await ctx.db.patch(id, updates);
+  },
+});
+
+export const reorderProjects = mutation({
+  args: {
+    items: v.array(v.object({ id: v.id("projects"), order: v.number() })),
+  },
+  handler: async (ctx, args) => {
+    for (const item of args.items) {
+      await ctx.db.patch(item.id, { order: item.order });
+    }
   },
 });
 
@@ -132,9 +177,12 @@ export const addBookmark = mutation({
     tags: v.optional(v.array(v.string())),
     techStack: v.array(v.string()),
     logo: v.string(),
+    order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const id = await ctx.db.insert("bookmarks", args);
+    const lastItem = await ctx.db.query("bookmarks").order("desc").first();
+    const newOrder = args.order ?? (lastItem?.order ?? 0) + 1;
+    const id = await ctx.db.insert("bookmarks", { ...args, order: newOrder });
     return id;
   },
 });
@@ -149,10 +197,22 @@ export const updateBookmark = mutation({
     tags: v.optional(v.array(v.string())),
     techStack: v.optional(v.array(v.string())),
     logo: v.optional(v.string()),
+    order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
     await ctx.db.patch(id, updates);
+  },
+});
+
+export const reorderBookmarks = mutation({
+  args: {
+    items: v.array(v.object({ id: v.id("bookmarks"), order: v.number() })),
+  },
+  handler: async (ctx, args) => {
+    for (const item of args.items) {
+      await ctx.db.patch(item.id, { order: item.order });
+    }
   },
 });
 

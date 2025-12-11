@@ -55,6 +55,16 @@
 			"args": [],
 			"isBackground": false,
 			"group": "build"
+		},
+		{
+			"label": "create-actions-file",
+			"type": "shell",
+			"command": "echo '\"use server\";\\n\\nimport { revalidatePath } from \"next/cache\";\\n\\nexport async function revalidateHome() {\\n  revalidatePath(\"/\");\\n}\\n' > app/actions.ts"
+		},
+		{
+			"label": "fix-actions-file",
+			"type": "shell",
+			"command": "echo '\"use server\";' > app/actions.ts && echo '' >> app/actions.ts && echo 'import { revalidatePath } from \"next/cache\";' >> app/actions.ts && echo '' >> app/actions.ts && echo 'export async function revalidateHome() {' >> app/actions.ts && echo '  revalidatePath(\"/\");' >> app/actions.ts && echo '}' >> app/actions.ts"
 		}
 	]
 }

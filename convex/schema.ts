@@ -13,7 +13,10 @@ export default defineSchema({
     description: v.string(),
     initials: v.optional(v.string()),
     slug: v.optional(v.string()),
-  }).index("by_slug", ["slug"]),
+    order: v.optional(v.number()),
+  })
+    .index("by_slug", ["slug"])
+    .index("by_order", ["order"]),
 
   projects: defineTable({
     title: v.string(),
@@ -27,9 +30,11 @@ export default defineSchema({
     logo: v.optional(v.string()),
     category: v.union(v.literal("work"), v.literal("personal")),
     xp: v.optional(v.number()),
+    order: v.optional(v.number()),
   })
     .index("by_experience", ["experienceId"])
-    .index("by_category", ["category"]),
+    .index("by_category", ["category"])
+    .index("by_order", ["order"]),
 
   bookmarks: defineTable({
     title: v.string(),
@@ -39,7 +44,10 @@ export default defineSchema({
     category: v.string(),
     logo: v.string(),
     tags: v.optional(v.array(v.string())),
-  }).index("by_category", ["category"]),
+    order: v.optional(v.number()),
+  })
+    .index("by_category", ["category"])
+    .index("by_order", ["order"]),
 
   featuredCompany: defineTable({
     name: v.string(),
@@ -55,5 +63,8 @@ export default defineSchema({
   skills: defineTable({
     category: v.string(), // "languages", "frameworks", "tools"
     items: v.array(v.object({ name: v.string(), icon: v.string() })),
-  }).index("by_category", ["category"]),
+    order: v.optional(v.number()),
+  })
+    .index("by_category", ["category"])
+    .index("by_order", ["order"]),
 });

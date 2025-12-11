@@ -2,22 +2,33 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { Preloaded, usePreloadedQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import FeaturedCompany from "./FeaturedCompany";
 import ProfessionalExperience from "./ProfessionalExperience";
 import TechnologiesAndTools from "./TechnologiesAndTools";
 import Navbar from "./Navbar";
 import ProjectCard from "./ProjectCard";
 import { SectionHeader } from "./ui/SectionHeader";
-import { Doc } from "../../convex/_generated/dataModel";
 
 interface ProjectShowcaseProps {
-    projects: Doc<"projects">[];
-    featuredCompany: Doc<"featuredCompany">;
-    experiences: Doc<"experiences">[];
-    skills: Doc<"skills">[];
+    preloadedProjects: Preloaded<typeof api.queries.getProjects>;
+    preloadedFeaturedCompany: Preloaded<typeof api.queries.getFeaturedCompany>;
+    preloadedExperiences: Preloaded<typeof api.queries.getExperiences>;
+    preloadedSkills: Preloaded<typeof api.queries.getSkills>;
 }
 
-export default function ProjectShowcase({ projects, featuredCompany, experiences, skills }: ProjectShowcaseProps) {
+export default function ProjectShowcase({ 
+    preloadedProjects, 
+    preloadedFeaturedCompany, 
+    preloadedExperiences, 
+    preloadedSkills 
+}: ProjectShowcaseProps) {
+    const projects = usePreloadedQuery(preloadedProjects);
+    const featuredCompany = usePreloadedQuery(preloadedFeaturedCompany);
+    const experiences = usePreloadedQuery(preloadedExperiences);
+    const skills = usePreloadedQuery(preloadedSkills);
+
     const [activeTab, setActiveTab] = useState<"work" | "personal">("work");
     const [selectedTech, setSelectedTech] = useState<string | null>(null);
 
