@@ -1,8 +1,12 @@
 import React from "react";
+import { preloadQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
 import { SkillList } from "@/app/components/admin/SkillList";
 import { SectionHeader } from "@/app/components/ui/SectionHeader";
 
-export default function SkillsPage() {
+export default async function SkillsPage() {
+    const preloadedSkills = await preloadQuery(api.queries.getSkills);
+
     return (
         <div>
             <SectionHeader
@@ -10,7 +14,7 @@ export default function SkillsPage() {
                 subtitle="Manage technical skills and tools."
                 className="mb-8"
             />
-            <SkillList />
+            <SkillList preloadedSkills={preloadedSkills} />
         </div>
     );
 }

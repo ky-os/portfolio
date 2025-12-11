@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
+import { Preloaded, usePreloadedQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { Edit, Trash2, Plus, GripVertical } from "lucide-react";
@@ -10,25 +11,23 @@ import { Card, CardContent } from "../ui/Card";
 import { Reorder } from "framer-motion";
 import { revalidateHome } from "@/app/actions";
 
-export function ProjectList() {
-    const projects = useQuery(api.queries.getProjects);
+interface ProjectListProps {
+    preloadedProjects: Preloaded<typeof api.queries.getProjects>;
+}
+
+export function ProjectList({ preloadedProjects }: ProjectListProps) {
+    const projects = usePreloadedQuery(preloadedProjects);
     const deleteProject = useMutation(api.mutations.deleteProject);
     const reorderProjects = useMutation(api.mutations.reorderProjects);
     const [editingProject, setEditingProject] = useState<Doc<"projects"> | null>(null);
     const [isCreating, setIsCreating] = useState(false);
-    const [workItems, setWorkItems] = useState<Doc<"projects">[]>([]);
-    const [personalItems, setPersonalItems] = useState<Doc<"projects">[]>([]);
+    const [workItems, setWorkItems] = useState(projects.filter(p => p.category === "work"));
+    const [personalItems, setPersonalItems] = useState(projects.filter(p => p.category === "personal"));
 
     React.useEffect(() => {
-        if (projects) {
-            setWorkItems(projects.filter(p => p.category === "work"));
-            setPersonalItems(projects.filter(p => p.category === "personal"));
-        }
+        setWorkItems(projects.filter(p => p.category === "work"));
+        setPersonalItems(projects.filter(p => p.category === "personal"));
     }, [projects]);
-
-    if (!projects) {
-        return <div className="text-gray-400 animate-pulse">Loading projects...</div>;
-    }
 
     const handleDelete = async (id: Doc<"projects">["_id"]) => {
         if (confirm("Are you sure you want to delete this project?")) {
@@ -105,7 +104,17 @@ export function ProjectList() {
                                 </Card>
                             </Reorder.Item>
                         ))}
-                        {workItems.length === 0 && <p className="text-gray-500 italic">No work projects.</p>}
+                        {workItems.length === 0 && (
+                            <div className="text-center py-8 text-gray-500 bg-gray-900/30 rounded-xl border border-gray-800 border-dashed">
+                                <p>No work projects found.</p>
+                                <button
+                                    onClick={() => setIsCreating(true)}
+                                    className="text-blue-400 hover:text-blue-300 mt-2 font-medium"
+                                >
+                                    Add a work project
+                                </button>
+                            </div>
+                        )}
                     </Reorder.Group>
                 </div>
 
@@ -143,7 +152,17 @@ export function ProjectList() {
                                 </Card>
                             </Reorder.Item>
                         ))}
-                        {personalItems.length === 0 && <p className="text-gray-500 italic">No personal projects.</p>}
+                        {personalItems.length === 0 && (
+                            <div className="text-center py-8 text-gray-500 bg-gray-900/30 rounded-xl border border-gray-800 border-dashed">
+                                <p>No personal projects found.</p>
+                                <button
+                                    onClick={() => setIsCreating(true)}
+                                    className="text-blue-400 hover:text-blue-300 mt-2 font-medium"
+                                >
+                                    Add a personal project
+                                </button>
+                            </div>
+                        )}
                     </Reorder.Group>
                 </div>
             </div>

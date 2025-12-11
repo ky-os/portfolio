@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
+import { Preloaded, usePreloadedQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { Edit, Trash2, Plus, GripVertical } from "lucide-react";
@@ -10,32 +11,36 @@ import { Card, CardContent } from "../ui/Card";
 import { Reorder } from "framer-motion";
 import { revalidateHome } from "@/app/actions";
 
-export function BookmarkList() {
-    const bookmarks = useQuery(api.queries.getBookmarks);
+interface BookmarkListProps {
+    preloadedBookmarks: Preloaded<typeof api.queries.getBookmarks>;
+}
+
+export function BookmarkList({ preloadedBookmarks }: BookmarkListProps) {
+    const bookmarks = usePreloadedQuery(preloadedBookmarks);
     const deleteBookmark = useMutation(api.mutations.deleteBookmark);
     const reorderBookmarks = useMutation(api.mutations.reorderBookmarks);
     const [editingBookmark, setEditingBookmark] = useState<Doc<"bookmarks"> | null>(null);
     const [isCreating, setIsCreating] = useState(false);
-    const [groupedItems, setGroupedItems] = useState<Record<string, Doc<"bookmarks">[]>>({});
-    const [categories, setCategories] = useState<string[]>([]);
+
+    const groupBookmarks = (bms: Doc<"bookmarks">[]) => {
+        const groups: Record<string, Doc<"bookmarks">[]> = {};
+        bms.forEach(bm => {
+            if (!groups[bm.category]) {
+                groups[bm.category] = [];
+            }
+            groups[bm.category].push(bm);
+        });
+        return groups;
+    };
+
+    const [groupedItems, setGroupedItems] = useState(groupBookmarks(bookmarks));
+    const [categories, setCategories] = useState(Object.keys(groupedItems).sort());
 
     React.useEffect(() => {
-        if (bookmarks) {
-            const groups: Record<string, Doc<"bookmarks">[]> = {};
-            bookmarks.forEach(bm => {
-                if (!groups[bm.category]) {
-                    groups[bm.category] = [];
-                }
-                groups[bm.category].push(bm);
-            });
-            setGroupedItems(groups);
-            setCategories(Object.keys(groups).sort());
-        }
+        const groups = groupBookmarks(bookmarks);
+        setGroupedItems(groups);
+        setCategories(Object.keys(groups).sort());
     }, [bookmarks]);
-
-    if (!bookmarks) {
-        return <div className="text-gray-400 animate-pulse">Loading bookmarks...</div>;
-    }
 
     const handleDelete = async (id: Doc<"bookmarks">["_id"]) => {
         if (confirm("Are you sure you want to delete this bookmark?")) {

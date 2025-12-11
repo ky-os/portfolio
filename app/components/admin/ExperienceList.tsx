@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
+import { Preloaded, usePreloadedQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { Edit, Trash2, Plus, GripVertical } from "lucide-react";
@@ -10,23 +11,21 @@ import { Card, CardContent } from "../ui/Card";
 import { Reorder } from "framer-motion";
 import { revalidateHome } from "@/app/actions";
 
-export function ExperienceList() {
-    const experiences = useQuery(api.queries.getExperiences);
+interface ExperienceListProps {
+    preloadedExperiences: Preloaded<typeof api.queries.getExperiences>;
+}
+
+export function ExperienceList({ preloadedExperiences }: ExperienceListProps) {
+    const experiences = usePreloadedQuery(preloadedExperiences);
     const deleteExperience = useMutation(api.mutations.deleteExperience);
     const reorderExperiences = useMutation(api.mutations.reorderExperiences);
     const [editingExperience, setEditingExperience] = useState<Doc<"experiences"> | null>(null);
     const [isCreating, setIsCreating] = useState(false);
-    const [items, setItems] = useState<Doc<"experiences">[]>([]);
+    const [items, setItems] = useState(experiences);
 
     React.useEffect(() => {
-        if (experiences) {
-            setItems(experiences);
-        }
+        setItems(experiences);
     }, [experiences]);
-
-    if (!experiences) {
-        return <div className="text-gray-400 animate-pulse">Loading experiences...</div>;
-    }
 
     const handleDelete = async (id: Doc<"experiences">["_id"]) => {
         if (confirm("Are you sure you want to delete this experience?")) {
