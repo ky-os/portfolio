@@ -91,6 +91,21 @@ const styles = StyleSheet.create({
         color: '#2563EB',
         textDecoration: 'none',
     },
+    skillRow: {
+        flexDirection: 'row',
+        marginBottom: 3,
+    },
+    skillLabel: {
+        fontSize: 10,
+        fontWeight: 'bold',
+        width: 70,
+        color: '#374151',
+    },
+    skillList: {
+        fontSize: 10,
+        color: '#4B5563',
+        flex: 1,
+    },
 });
 
 const BulletPoint = ({ children }: { children: string }) => (
@@ -100,7 +115,15 @@ const BulletPoint = ({ children }: { children: string }) => (
     </View>
 );
 
-const ResumeDocument = () => {
+interface ResumeDocumentProps {
+    skills?: {
+        languages: string[];
+        frameworks: string[];
+        tools: string[];
+    };
+}
+
+const ResumeDocument = ({ skills = { languages: [], frameworks: [], tools: [] } }: ResumeDocumentProps) => {
     const workProjects = projects.filter(p => p.category === "work");
     const personalProjects = projects.filter(p => p.category === "personal");
 
@@ -119,6 +142,22 @@ const ResumeDocument = () => {
                         <Link src="https://github.com/ky-os" style={styles.link}>GitHub</Link>
                         <Text>|</Text>
                         <Link src="https://ky-os.dev/" style={styles.link}>Portfolio</Link>
+                    </View>
+                </View>
+
+                {/* Technical Skills */}
+                <View style={{ marginBottom: 15, borderBottom: '1pt solid #E5E7EB', paddingBottom: 10 }}>
+                    <View style={styles.skillRow}>
+                        <Text style={styles.skillLabel}>Languages:</Text>
+                        <Text style={styles.skillList}>{skills.languages.join(", ")}</Text>
+                    </View>
+                    <View style={styles.skillRow}>
+                        <Text style={styles.skillLabel}>Frameworks:</Text>
+                        <Text style={styles.skillList}>{skills.frameworks.join(", ")}</Text>
+                    </View>
+                    <View style={styles.skillRow}>
+                        <Text style={styles.skillLabel}>Tools:</Text>
+                        <Text style={styles.skillList}>{skills.tools.join(", ")}</Text>
                     </View>
                 </View>
 

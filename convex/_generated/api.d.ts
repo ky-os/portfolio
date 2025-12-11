@@ -11,6 +11,7 @@
 import type * as actions from "../actions.js";
 import type * as mutations from "../mutations.js";
 import type * as queries from "../queries.js";
+import type * as seed from "../seed.js";
 
 import type {
   ApiFromModules,
@@ -22,6 +23,7 @@ declare const fullApi: ApiFromModules<{
   actions: typeof actions;
   mutations: typeof mutations;
   queries: typeof queries;
+  seed: typeof seed;
 }>;
 
 /**

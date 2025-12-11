@@ -49,3 +49,10 @@ export const getFeaturedCompany = query({
     return companies[0]; // Assuming only one
   },
 });
+
+export const getSkills = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("skills").collect();
+  },
+});

@@ -10,7 +10,8 @@ export default defineSchema({
     url: v.string(),
     description: v.string(),
     initials: v.optional(v.string()),
-  }),
+    slug: v.optional(v.string()),
+  }).index("by_slug", ["slug"]),
 
   projects: defineTable({
     title: v.string(),
@@ -46,4 +47,9 @@ export default defineSchema({
     url: v.string(),
     highlights: v.array(v.string()),
   }),
+
+  skills: defineTable({
+    category: v.string(), // "languages", "frameworks", "tools"
+    items: v.array(v.string()),
+  }).index("by_category", ["category"]),
 });

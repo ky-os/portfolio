@@ -41,6 +41,18 @@ export const deleteExperience = mutation({
   },
 });
 
+// Skills mutations
+export const addSkill = mutation({
+args: {
+category: v.string(),
+items: v.array(v.string()),
+},
+handler: async (ctx, args) => {
+const id = await ctx.db.insert("skills", args);
+return id;
+},
+});
+
 // Projects mutations
 export const addProject = mutation({
   args: {

@@ -1,15 +1,7 @@
-export interface Experience {
-  id: string;
-  name: string;
-  role: string;
-  period: string;
-  logo: string | null;
-  url: string;
-  description: string;
-  initials?: string;
-}
+import { internalMutation } from "./_generated/server";
+import { v } from "convex/values";
 
-export const experiences: Experience[] = [
+const experiences = [
   {
     id: "solx",
     name: "SolX Technologies Inc.",
@@ -52,21 +44,7 @@ export const experiences: Experience[] = [
   },
 ];
 
-export interface Project {
-  title: string;
-  role: string;
-  company?: string;
-  experienceId?: string;
-  date: string;
-  description: string[];
-  techStack: string[];
-  link?: string;
-  logo?: string;
-  category: "work" | "personal";
-  xp?: number;
-}
-
-export const projects: Project[] = [
+const projects = [
   {
     title: "SolX Sales-Ops Admin Tool",
     role: "Software Engineer I",
@@ -329,6 +307,7 @@ export const projects: Project[] = [
     link: "https://github.com/ky-os/Arduino-Thermocycler",
     logo: "https://www.google.com/s2/favicons?domain=github.com&sz=128",
     category: "personal",
+    xp: 0
   },
   {
     title: "Portfolio Website",
@@ -342,10 +321,11 @@ export const projects: Project[] = [
     techStack: ["Next.js", "Tailwind CSS", "TypeScript"],
     link: "https://github.com/ky-os/portfolio",
     category: "personal",
+    xp: 0
   },
 ];
 
-export const featuredCompany = {
+const featuredCompany = {
   name: "SolX Technologies Inc.",
   role: "Software Engineer I",
   period: "July 2024 - November 2025",
@@ -364,16 +344,7 @@ export const featuredCompany = {
   ],
 };
 
-export interface Bookmark {
-  title: string;
-  description: string;
-  techStack: string[];
-  link: string;
-  category: string;
-  logo: string;
-}
-
-export const bookmarks: Bookmark[] = [
+const bookmarks = [
   {
     title: "Vite",
     description:
@@ -386,7 +357,7 @@ export const bookmarks: Bookmark[] = [
   {
     title: "Spring Boot",
     description:
-      'Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications that you can "just run".',
+      "Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications that you can \"just run\".",
     techStack: ["Java", "Kotlin", "Groovy"],
     link: "https://spring.io/projects/spring-boot",
     category: "Full Stack Development",
@@ -491,16 +462,58 @@ export const bookmarks: Bookmark[] = [
   },
 ];
 
-export const skills = {
-  languages: ["TypeScript", "JavaScript", "SQL", "HTML", "CSS"],
-  frameworks: [
-    "Next.js",
-    "React",
-    "Node.js",
-    "Tailwind CSS",
-    "Express",
-    "Drizzle ORM",
-    "Prisma",
-  ],
-  tools: ["Git", "Docker", "AWS", "PostgreSQL", "Redis", "Linux"],
-};
+export const seed = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    // 1. Clear existing data (optional, but good for clean slate)
+    const existingExperiences = await ctx.db.query("experiences").collect();
+    for (const exp of existingExperiences) await ctx.db.delete(exp._id);
+
+    const existingProjects = await ctx.db.query("projects").collect();
+    for (const proj of existingProjects) await ctx.db.delete(proj._id);
+
+    const existingBookmarks = await ctx.db.query("bookmarks").collect();
+    for (const bm of existingBookmarks) await ctx.db.delete(bm._id);
+
+    const existingFeatured = await ctx.db.query("featuredCompany").collect();
+    for (const fc of existingFeatured) await ctx.db.delete(fc._id);
+
+    // 2. Seed Experiences
+    const experienceIdMap = new Map<string, any>();
+    for (const exp of experiences) {
+      const { id, logo, ...rest } = exp;
+      const newId = await ctx.db.insert("experiences", {
+        ...rest,
+        slug: id,
+        logo: logo === null ? undefined : logo,
+      });
+      experienceIdMap.set(id, newId);
+    }
+
+    // 3. Seed Projects
+    for (const proj of projects) {
+      const { experienceId, logo, link, xp, ...rest } = proj;
+      let convexExperienceId = undefined;
+      if (experienceId) {
+        convexExperienceId = experienceIdMap.get(experienceId);
+      }
+
+      await ctx.db.insert("projects", {
+        ...rest,
+        experienceId: convexExperienceId,
+        logo: logo === null ? undefined : logo,
+        link: link === null ? undefined : link,
+        xp: xp === undefined ? 0 : xp,
+        category: proj.category as "work" | "personal",
+      });
+    }
+
+    // 4. Seed Bookmarks
+    for (const bm of bookmarks) {
+      await ctx.db.insert("bookmarks", bm);
+    }
+
+    // 5. Seed Featured Company
+    await ctx.db.insert("featuredCompany", featuredCompany);
+  },
+});
