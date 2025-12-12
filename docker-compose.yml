@@ -1,19 +1,18 @@
 services:
   convex-backend:
+    container_name: portfolio-convex-backend
     image: ghcr.io/get-convex/convex-backend:latest
     stop_grace_period: 10s
     stop_signal: SIGINT
-    ports:
-      # Convex API
-      - "${CONVEX_PORT:-3210}:3210"
-      # Convex HTTP Actions (site proxy)
-      - "${CONVEX_SITE_PROXY_PORT:-3211}:3211"
+    expose:
+      - "3210"
+      - "3211"
     volumes:
       - convex_data:/convex/data
     environment:
       # Public URLs as accessed by the browser (set these to your domain in production)
-      - CONVEX_CLOUD_ORIGIN=${CONVEX_CLOUD_ORIGIN:-http://localhost:${CONVEX_PORT:-3210}}
-      - CONVEX_SITE_ORIGIN=${CONVEX_SITE_ORIGIN:-http://localhost:${CONVEX_SITE_PROXY_PORT:-3211}}
+      - CONVEX_CLOUD_ORIGIN=${CONVEX_CLOUD_ORIGIN:-http://${CONVEX_DOMAIN:-convex.localhost}}
+      - CONVEX_SITE_ORIGIN=${CONVEX_SITE_ORIGIN:-http://${CONVEX_SITE_DOMAIN:-convex-site.localhost}}
 
       # Optional (recommended for production): connect to Postgres/MySQL
       - POSTGRES_URL
@@ -34,38 +33,70 @@ services:
       timeout: 3s
       retries: 30
       start_period: 10s
+    labels:
+      - traefik.enable=true
+      # Convex API (port 3210)
+      - traefik.http.routers.convex-api.rule=Host(`${CONVEX_DOMAIN:-convex.localhost}`)
+      - traefik.http.routers.convex-api.entrypoints=web
+      - traefik.http.services.convex-api.loadbalancer.server.port=3210
+      # Convex Site Proxy / HTTP Actions (port 3211)
+      - traefik.http.routers.convex-site.rule=Host(`${CONVEX_SITE_DOMAIN:-convex-site.localhost}`)
+      - traefik.http.routers.convex-site.entrypoints=web
+      - traefik.http.services.convex-site.loadbalancer.server.port=3211
+    networks:
+      - dokploy-network
 
   convex-dashboard:
+    container_name: portfolio-convex-dashboard
     image: ghcr.io/get-convex/convex-dashboard:latest
     stop_grace_period: 10s
     stop_signal: SIGINT
-    ports:
-      - "${CONVEX_DASHBOARD_PORT:-6791}:6791"
+    expose:
+      - "6791"
     environment:
-      - NEXT_PUBLIC_DEPLOYMENT_URL=${NEXT_PUBLIC_DEPLOYMENT_URL:-http://localhost:${CONVEX_PORT:-3210}}
+      - NEXT_PUBLIC_DEPLOYMENT_URL=${NEXT_PUBLIC_DEPLOYMENT_URL:-http://${CONVEX_DOMAIN:-convex.localhost}}
     depends_on:
       convex-backend:
         condition: service_healthy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.convex-dashboard.rule=Host(`${CONVEX_DASHBOARD_DOMAIN:-convex-dashboard.localhost}`)
+      - traefik.http.routers.convex-dashboard.entrypoints=web
+      - traefik.http.services.convex-dashboard.loadbalancer.server.port=6791
+    networks:
+      - dokploy-network
 
   web:
+    container_name: portfolio-web
     build:
       context: .
       dockerfile: Dockerfile
       args:
         # This is compiled into the client bundle (browser must be able to reach it).
-        NEXT_PUBLIC_CONVEX_URL: ${NEXT_PUBLIC_CONVEX_URL:-http://localhost:${CONVEX_PORT:-3210}}
-    ports:
-      - "${WEB_PORT:-3000}:3000"
+        NEXT_PUBLIC_CONVEX_URL: ${NEXT_PUBLIC_CONVEX_URL:-http://${CONVEX_DOMAIN:-convex.localhost}}
+    expose:
+      - "3000"
     environment:
       # Server-side calls from Next.js container -> Convex container
       - CONVEX_URL=http://convex-backend:3210
       - CONVEX_SELF_HOSTED_URL=http://convex-backend:3210
 
       # Client-side calls from the browser -> host port (override to your domain in production)
-      - NEXT_PUBLIC_CONVEX_URL=${NEXT_PUBLIC_CONVEX_URL:-http://localhost:${CONVEX_PORT:-3210}}
+      - NEXT_PUBLIC_CONVEX_URL=${NEXT_PUBLIC_CONVEX_URL:-http://${CONVEX_DOMAIN:-convex.localhost}}
     depends_on:
       convex-backend:
         condition: service_healthy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.web.rule=Host(`${WEB_DOMAIN:-portfolio.localhost}`)
+      - traefik.http.routers.web.entrypoints=web
+      - traefik.http.services.web.loadbalancer.server.port=3000
+    networks:
+      - dokploy-network
 
 volumes:
   convex_data:
+
+networks:
+  dokploy-network:
+    external: true
