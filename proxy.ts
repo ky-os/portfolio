@@ -1,24 +1,33 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getAuthToken } from "@/lib/get-auth-token";
+import {
+  convexAuthNextjsMiddleware,
+  createRouteMatcher,
+} from "@convex-dev/auth/nextjs/server";
+import { NextResponse } from "next/server";
 
-// Protect admin routes and allow prefetch to pass through.
-export async function proxy(req: NextRequest) {
-  const token = await getAuthToken();
+const isAdminLanding = createRouteMatcher(["/admin"]);
+const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 
-  if (!token) {
-    // Redirect unauthorized users to the admin access (login) page.
-    // Preserve requested path for optional redirect after sign-in.
-    const signInUrl = new URL("/admin", req.nextUrl);
-    signInUrl.searchParams.set(
+export const proxy = convexAuthNextjsMiddleware(async (request, { convexAuth }) => {
+  if (!isAdminRoute(request)) return;
+
+  // Let the admin landing page render the SignIn UI to avoid redirect loops.
+  if (isAdminLanding(request)) return;
+
+  if (!(await convexAuth.isAuthenticated())) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/admin";
+    url.searchParams.set(
       "redirect",
-      req.nextUrl.pathname + req.nextUrl.search
+      request.nextUrl.pathname + request.nextUrl.search
     );
-    return NextResponse.redirect(signInUrl);
+    return NextResponse.redirect(url);
   }
-
-  return NextResponse.next();
-}
+});
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: [
+    {
+      source: "/admin/:path*",
+    },
+  ],
 };
