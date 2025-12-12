@@ -9,10 +9,17 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const preloadedProjects = await preloadQuery(api.queries.getProjects);
-  const preloadedFeaturedCompany = await preloadQuery(api.queries.getFeaturedCompany);
-  const preloadedExperiences = await preloadQuery(api.queries.getExperiences);
-  const preloadedSkills = await preloadQuery(api.queries.getSkills);
+  const [
+    preloadedProjects,
+    preloadedFeaturedCompany,
+    preloadedExperiences,
+    preloadedSkills,
+  ] = await Promise.all([
+    preloadQuery(api.queries.getProjects),
+    preloadQuery(api.queries.getFeaturedCompany),
+    preloadQuery(api.queries.getExperiences),
+    preloadQuery(api.queries.getSkills),
+  ]);
 
   return (
     <ProjectShowcase

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { Preloaded, usePreloadedQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -33,7 +33,7 @@ export default function ProjectShowcase({
     const [activeTab, setActiveTab] = useState<"work" | "personal">("work");
     const [selectedTech, setSelectedTech] = useState<string | null>(null);
 
-    const calculateLevelInfo = (exp: number) => {
+    const calculateLevelInfo = useCallback((exp: number) => {
         let lvl = 1;
         let xpRequired = 1000;
         let accumulatedXp = 0;
@@ -50,18 +50,18 @@ export default function ProjectShowcase({
             requiredXp: xpRequired,
             progress: ((exp - accumulatedXp) / xpRequired) * 100
         };
-    };
+    }, []);
 
-    const getTitle = (level: number) => {
+    const getTitle = useCallback((level: number) => {
         if (level >= 50) return "Mythical Developer";
         if (level >= 30) return "Grandmaster Architect";
         if (level >= 20) return "Principal Engineer";
         if (level >= 10) return "Senior Engineer";
         if (level >= 5) return "Mid-Level Engineer";
         return "Junior Engineer";
-    };
+    }, []);
 
-    const getTopSkills = (allProjects: typeof projects) => {
+    const getTopSkills = useCallback((allProjects: typeof projects) => {
         const skillMap: Record<string, number> = {};
 
         allProjects.forEach(project => {
@@ -71,7 +71,8 @@ export default function ProjectShowcase({
             });
         });
 
-        const maxSkillXp = Math.max(...Object.values(skillMap));
+        const values = Object.values(skillMap);
+        const maxSkillXp = values.length ? Math.max(...values) : 0;
 
         return Object.entries(skillMap)
             .sort(([, a], [, b]) => b - a)
@@ -79,11 +80,11 @@ export default function ProjectShowcase({
             .map(([name, xp]) => ({
                 name,
                 xp,
-                percentage: (xp / maxSkillXp) * 100
+                percentage: maxSkillXp ? (xp / maxSkillXp) * 100 : 0
             }));
-    };
+    }, []);
 
-    const getAttributes = (allProjects: typeof projects) => {
+    const getAttributes = useCallback((allProjects: typeof projects) => {
         const stats = {
             "Backend": 0,
             "Frontend": 0,
@@ -115,24 +116,35 @@ export default function ProjectShowcase({
         return Object.entries(stats).map(([key, value]) => ({
             name: key,
             value: Math.round(value),
-            percentage: (value / maxStat) * 100
+            percentage: maxStat ? (value / maxStat) * 100 : 0
         }));
-    };
+    }, []);
 
-    const BASE_XP = 1000;
-    const totalExp = projects.reduce((acc, project) => acc + (project.xp || BASE_XP), 0);
-    const levelInfo = calculateLevelInfo(totalExp);
-    const topSkills = getTopSkills(projects);
-    const attributes = getAttributes(projects);
-    const currentTitle = getTitle(levelInfo.level);
+    const { totalExp, levelInfo, topSkills, attributes, currentTitle } = useMemo(() => {
+        const BASE_XP = 1000;
+        const totalExp = projects.reduce(
+            (acc, project) => acc + (project.xp || BASE_XP),
+            0
+        );
+        const levelInfo = calculateLevelInfo(totalExp);
+        return {
+            totalExp,
+            levelInfo,
+            topSkills: getTopSkills(projects),
+            attributes: getAttributes(projects),
+            currentTitle: getTitle(levelInfo.level),
+        };
+    }, [projects, calculateLevelInfo, getTopSkills, getAttributes, getTitle]);
 
-    const filteredProjects = projects.filter(
-        (project) => {
+    const filteredProjects = useMemo(() => {
+        return projects.filter((project) => {
             const matchesTab = project.category === activeTab;
-            const matchesTech = selectedTech ? project.techStack.includes(selectedTech) : true;
+            const matchesTech = selectedTech
+                ? project.techStack.includes(selectedTech)
+                : true;
             return matchesTab && matchesTech;
-        }
-    );
+        });
+    }, [projects, activeTab, selectedTech]);
 
 
     return (

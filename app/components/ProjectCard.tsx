@@ -1,9 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ExternalLink, Calendar, Award } from "lucide-react";
 import { type Project } from "@/lib/data";
+
+type CSSVarProperties = React.CSSProperties & {
+    [key: `--${string}`]: string | number;
+};
 
 interface ProjectCardProps {
     project: Project;
@@ -23,15 +27,15 @@ export default function ProjectCard({
     isLast = false
 }: ProjectCardProps) {
     const cardRef = useRef<HTMLDivElement>(null);
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!cardRef.current) return;
-        const rect = cardRef.current.getBoundingClientRect();
-        setMousePosition({
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-        });
+        const el = cardRef.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        el.style.setProperty("--spotlight-x", `${x}px`);
+        el.style.setProperty("--spotlight-y", `${y}px`);
     };
 
     const gradientFrom = activeTab === "work" ? "from-blue-500" : "from-purple-500";
@@ -89,12 +93,16 @@ export default function ProjectCard({
                 ref={cardRef}
                 onMouseMove={handleMouseMove}
                 className="flex-1 bg-gray-900/50 border border-gray-800 rounded-xl p-6 transition-colors relative overflow-hidden group/card hover:border-gray-700"
+                style={{
+                    "--spotlight-x": "0px",
+                    "--spotlight-y": "0px",
+                } as CSSVarProperties}
             >
                 {/* Spotlight Effect */}
                 <div
                     className="pointer-events-none absolute -inset-px transition duration-300 opacity-0 group-hover/card:opacity-100"
                     style={{
-                        background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(${activeTab === "work" ? "59, 130, 246" : "168, 85, 247"}, 0.1), transparent 40%)`
+                        background: `radial-gradient(600px circle at var(--spotlight-x) var(--spotlight-y), rgba(${activeTab === "work" ? "59, 130, 246" : "168, 85, 247"}, 0.1), transparent 40%)`
                     }}
                 />
 
