@@ -25,9 +25,5 @@ export const proxy = convexAuthNextjsMiddleware(async (request, { convexAuth }) 
 });
 
 export const config = {
-  matcher: [
-    {
-      source: "/admin/:path*",
-    },
-  ],
+  matcher: ["/api/auth", "/api/auth/", "/admin/:path*"],
 };
