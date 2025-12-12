@@ -7,7 +7,17 @@ import { NextResponse } from "next/server";
 const isAdminLanding = createRouteMatcher(["/admin"]);
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 
-export const proxy = convexAuthNextjsMiddleware(async (request, { convexAuth }) => {
+const convexUrl =
+  process.env.CONVEX_SELF_HOSTED_URL ?? process.env.NEXT_PUBLIC_CONVEX_URL;
+
+if (!convexUrl) {
+  throw new Error(
+    "Missing Convex URL. Set CONVEX_SELF_HOSTED_URL (recommended) or NEXT_PUBLIC_CONVEX_URL.",
+  );
+}
+
+export const proxy = convexAuthNextjsMiddleware(
+  async (request, { convexAuth }) => {
   if (!isAdminRoute(request)) return;
 
   // Let the admin landing page render the SignIn UI to avoid redirect loops.
@@ -22,7 +32,9 @@ export const proxy = convexAuthNextjsMiddleware(async (request, { convexAuth }) 
     );
     return NextResponse.redirect(url);
   }
-});
+  },
+  { convexUrl },
+);
 
 export const config = {
   matcher: ["/api/auth/:path*", "/admin/:path*"],
