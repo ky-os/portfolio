@@ -1,11 +1,9 @@
 # Nixpacks configuration for Next.js application
 
-buildImage = "ghcr.io/railwayapp/nixpacks:ubuntu-1745885067"
-
 [phases.setup]
 # Install Nix packages and enable caching for repeated builds
-nixPkgs = ["nodejs", "curl"]
-cacheDirectories = ["~/.npm", "~/.cache/nix"]
+nixPkgs = ["nodejs"]
+cacheDirectories = ["~/.cache/nix"]
 
 [phases.install]
 cmds = ["npm ci"]
@@ -19,11 +17,11 @@ cacheDirectories = [".next/cache", "node_modules/.cache"]
 
 [phases.convex-deploy]
 dependsOn = ["build"]
-# Only deploy Convex functions when convex-related files change, and keep package files available
-cmds = ["if git show --name-only --pretty=\"\" HEAD | grep -q '^convex/' ; then echo 'Convex related changes detected. Deploying Convex functions.' && npx convex deploy; else echo 'No Convex-related changes detected. Skipping Convex deploy.'; fi"]
-onlyIncludeFiles = ["convex/**", "package.json", "package-lock.json"]
+# Only deploy Convex functions when Convex-related files change
+cmds = ["bash tools/convex-deploy-if-changed.sh"]
+onlyIncludeFiles = ["convex/**", "tools/convex-deploy-if-changed.sh", "package.json", "package-lock.json"]
 
 [start]
 cmd = "npm run start"
 runImage = "node:22-bullseye-slim"
-onlyIncludeFiles = [".next", "public", "package.json", "package-lock.json", "node_modules"]
+onlyIncludeFiles = [".next", "public", "package.json", "node_modules"]
