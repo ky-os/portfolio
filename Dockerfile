@@ -1,3 +1,5 @@
+## syntax=docker/dockerfile:1.7
+
 FROM node:22-bullseye-slim AS base
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -12,6 +14,8 @@ RUN --mount=type=cache,target=/root/.npm \
 
 FROM base AS builder
 ENV NODE_ENV=production
+ARG NEXT_PUBLIC_CONVEX_URL
+ENV NEXT_PUBLIC_CONVEX_URL=$NEXT_PUBLIC_CONVEX_URL
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN --mount=type=cache,target=/root/.npm \
@@ -24,6 +28,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOSTNAME=0.0.0.0
+ARG NEXT_PUBLIC_CONVEX_URL
+ENV NEXT_PUBLIC_CONVEX_URL=$NEXT_PUBLIC_CONVEX_URL
 
 # Next.js standalone output contains the server and minimal node_modules
 COPY --from=builder --chown=node:node /app/.next/standalone ./
