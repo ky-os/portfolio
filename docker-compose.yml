@@ -78,8 +78,8 @@ services:
       - "3000"
     environment:
       # Server-side calls from Next.js container -> Convex container
-      - CONVEX_URL=http://convex-backend:3210
-      - CONVEX_SELF_HOSTED_URL=http://convex-backend:3210
+      - CONVEX_SELF_HOSTED_URL=${CONVEX_SELF_HOSTED_URL:-http://convex-backend:3210}
+      - CONVEX_SELF_HOSTED_ADMIN_KEY
 
       # Client-side calls from the browser -> host port (override to your domain in production)
       - NEXT_PUBLIC_CONVEX_URL=${NEXT_PUBLIC_CONVEX_URL:-http://${CONVEX_DOMAIN:-convex.localhost}}
