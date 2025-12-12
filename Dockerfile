@@ -2,17 +2,18 @@
 
 FROM node:22-bullseye-slim AS base
 WORKDIR /app
-ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 
 FROM base AS deps
+ENV NODE_ENV=development
 COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
     npm ci --no-audit --fund=false
 
 
 FROM base AS builder
+ENV NODE_ENV=development
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN --mount=type=cache,target=/root/.npm \

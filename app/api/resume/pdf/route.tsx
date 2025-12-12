@@ -1,10 +1,11 @@
 import { renderToStream } from '@react-pdf/renderer';
 import ResumeDocument from '@/app/components/ResumeDocument';
 import { NextResponse } from 'next/server';
-import { convex } from '@/lib/convex';
+import { getConvexHttpClient } from '@/lib/convex';
 import { api } from '@/convex/_generated/api';
 
 export async function GET() {
+    const convex = getConvexHttpClient();
     const skillsData = await convex.query(api.queries.getSkills);
 
     // Transform the skills data into the format expected by ResumeDocument

@@ -1,9 +1,10 @@
 import { generateMarkdown } from '@/lib/resume-utils';
 import { NextResponse } from 'next/server';
-import { convex } from '@/lib/convex';
+import { getConvexHttpClient } from '@/lib/convex';
 import { api } from '@/convex/_generated/api';
 
 export async function GET() {
+    const convex = getConvexHttpClient();
     const projects = await convex.query(api.queries.getProjects);
     const featuredCompany = await convex.query(api.queries.getFeaturedCompany);
 
