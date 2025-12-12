@@ -1,12 +1,20 @@
-import React, { useState, useRef, useEffect } from "react";
+"use client";
+
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import VirtualPetGame from "../VirtualPetGame";
+import dynamic from "next/dynamic";
+
+const VirtualPetGame = dynamic(() => import("../VirtualPetGame"), {
+    ssr: false,
+    loading: () => null,
+});
 
 export function Footer() {
     const currentYear = new Date().getFullYear();
     const [isGuarding, setIsGuarding] = useState(false);
     const [guardTarget, setGuardTarget] = useState({ x: 0, y: 0 });
     const [playerHealth, setPlayerHealth] = useState(3);
+    const [shouldLoadGame, setShouldLoadGame] = useState(false);
     const [pets, setPets] = useState<Array<{
         id: number;
         initialPosition?: { x: number; y: number };
@@ -21,6 +29,8 @@ export function Footer() {
     ]);
     const easterEggRef = useRef<HTMLAnchorElement>(null);
     const footerRef = useRef<HTMLElement>(null);
+    const pointerRafRef = useRef<number | null>(null);
+    const pendingPointerRef = useRef<{ x: number; y: number } | null>(null);
 
     const handlePlayerDamage = () => {
         setPlayerHealth(prev => Math.max(0, prev - 1));
@@ -34,6 +44,28 @@ export function Footer() {
         }
     }, [playerHealth]);
 
+    useEffect(() => {
+        const el = footerRef.current;
+        if (!el) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries.some((entry) => entry.isIntersecting)) {
+                    setShouldLoadGame(true);
+                    observer.disconnect();
+                }
+            },
+            {
+                root: null,
+                rootMargin: "200px",
+                threshold: 0,
+            }
+        );
+
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
+
     const handleLifespanEnd = (id: number) => {
         setPets(prev => prev.map(p => p.id === id ? { ...p, isExiting: true } : p));
     };
@@ -42,35 +74,42 @@ export function Footer() {
         setPets(prev => prev.filter(p => p.id !== id));
     };
 
+    const scheduleGuardTargetUpdate = useCallback(() => {
+        if (pointerRafRef.current != null) return;
+        pointerRafRef.current = window.requestAnimationFrame(() => {
+            pointerRafRef.current = null;
+            if (!pendingPointerRef.current) return;
+            setGuardTarget(pendingPointerRef.current);
+        });
+    }, []);
+
+    const handlePointerMove = useCallback((e: React.PointerEvent<HTMLElement>) => {
+        if (!shouldLoadGame) return;
+        if (!isGuarding) setIsGuarding(true);
+        pendingPointerRef.current = { x: e.clientX, y: e.clientY };
+        scheduleGuardTargetUpdate();
+    }, [isGuarding, scheduleGuardTargetUpdate, shouldLoadGame]);
+
+    const handlePointerLeave = useCallback(() => {
+        if (isGuarding) setIsGuarding(false);
+    }, [isGuarding]);
+
     useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            if (!footerRef.current) return;
-
-            const footerRect = footerRef.current.getBoundingClientRect();
-
-            // Check if mouse is in footer area
-            if (e.clientY >= footerRect.top && e.clientY <= footerRect.bottom) {
-                setIsGuarding(prev => {
-                    if (!prev) return true;
-                    return prev;
-                });
-                setGuardTarget({ x: e.clientX, y: e.clientY });
-            } else {
-                setIsGuarding(prev => {
-                    if (prev) return false;
-                    return prev;
-                });
-            }
-        };
-
-        document.addEventListener('mousemove', handleMouseMove);
         return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
+            if (pointerRafRef.current != null) {
+                window.cancelAnimationFrame(pointerRafRef.current);
+                pointerRafRef.current = null;
+            }
         };
     }, []);
 
     return (
-        <footer ref={footerRef} className="relative bg-gray-900/50 mt-24 overflow-hidden">
+        <footer
+            ref={footerRef}
+            className="relative bg-gray-900/50 mt-24 overflow-hidden"
+            onPointerMove={handlePointerMove}
+            onPointerLeave={handlePointerLeave}
+        >
             <div className="max-w-5xl mx-auto px-4 py-12 relative z-10">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="text-center md:text-left">
@@ -139,15 +178,17 @@ export function Footer() {
             </div>
 
             {/* Virtual Pets guarding the easter egg */}
-            <VirtualPetGame
-                pets={pets}
-                isGuarding={isGuarding}
-                guardTarget={guardTarget}
-                onPetLifespanEnd={handleLifespanEnd}
-                onPetExitComplete={handleExitComplete}
-                onPlayerDamage={handlePlayerDamage}
-                playerHealth={playerHealth}
-            />
+            {shouldLoadGame ? (
+                <VirtualPetGame
+                    pets={pets}
+                    isGuarding={isGuarding}
+                    guardTarget={guardTarget}
+                    onPetLifespanEnd={handleLifespanEnd}
+                    onPetExitComplete={handleExitComplete}
+                    onPlayerDamage={handlePlayerDamage}
+                    playerHealth={playerHealth}
+                />
+            ) : null}
 
             <style dangerouslySetInnerHTML={{
                 __html: `
