@@ -31,9 +31,11 @@ export function SignIn() {
   const [isHovered, setIsHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState("INITIALIZING HANDSHAKE...");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSignIn = async () => {
     setIsLoading(true);
+    setErrorMessage(null);
 
     // Cycle through some "hacker" texts while waiting for the redirect
     const texts = [
@@ -49,8 +51,19 @@ export function SignIn() {
       i++;
     }, 800);
 
-    await signIn("github");
-    clearInterval(interval);
+    try {
+      await signIn("github");
+    } catch (err) {
+      console.error("Convex Auth sign-in failed", err);
+      setIsLoading(false);
+      setErrorMessage(
+        err instanceof Error
+          ? err.message
+          : "Sign-in failed. Check Convex/Next env + allowed origin settings.",
+      );
+    } finally {
+      clearInterval(interval);
+    }
   };
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-md mx-auto perspective-1000">
@@ -158,6 +171,12 @@ export function SignIn() {
                   {/* Hover Effect */}
                   <div className="absolute inset-0 bg-linear-to-r from-blue-600/10 to-purple-600/10 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
                 </button>
+
+                {errorMessage && (
+                  <div className="w-full rounded-md border border-red-500/20 bg-red-500/5 px-3 py-2 text-[11px] font-mono text-red-300">
+                    {errorMessage}
+                  </div>
+                )}
 
                 <div className="flex items-center gap-2 text-[10px] text-gray-600 font-mono">
                   <div className="w-2 h-2 rounded-full bg-green-500/50 animate-pulse" />
