@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
+import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import { ConvexClientProvider } from "@/lib/convex-client";
 import "./globals.css";
 
@@ -25,19 +26,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ConvexClientProvider>
-          {children}
-        </ConvexClientProvider>
-        <Script
-          src="https://umami.ky-os.dev/script.js"
-          data-website-id="57954fcf-b352-4b49-9596-b1989eb207a5"
-          strategy="afterInteractive"
-        />
-      </body>
-    </html>
+    <ConvexAuthNextjsServerProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <ConvexClientProvider>{children}</ConvexClientProvider>
+          <Script
+            src="https://umami.ky-os.dev/script.js"
+            data-website-id="57954fcf-b352-4b49-9596-b1989eb207a5"
+            strategy="afterInteractive"
+          />
+        </body>
+      </html>
+    </ConvexAuthNextjsServerProvider>
   );
 }
