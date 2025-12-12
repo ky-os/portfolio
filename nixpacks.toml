@@ -8,7 +8,7 @@ nixPkgs = ["nodejs", "curl"]
 cacheDirectories = ["~/.npm", "~/.cache/nix"]
 
 [phases.install]
-cmds = ["npm ci --omit=dev"]
+cmds = ["npm ci"]
 cacheDirectories = ["~/.npm", "node_modules", "node_modules/.cache"]
 onlyIncludeFiles = ["package.json", "package-lock.json"]
 
@@ -26,4 +26,4 @@ onlyIncludeFiles = ["convex/**", "package.json", "package-lock.json"]
 [start]
 cmd = "npm run start"
 runImage = "node:22-bullseye-slim"
-onlyIncludeFiles = [".next", "public", "package.json", "package-lock.json"]
+onlyIncludeFiles = [".next", "public", "package.json", "package-lock.json", "node_modules"]
