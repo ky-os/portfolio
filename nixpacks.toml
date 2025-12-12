@@ -4,7 +4,7 @@ buildImage = "ghcr.io/railwayapp/nixpacks:ubuntu-1745885067"
 
 [phases.setup]
 # Install Nix packages and enable caching for repeated builds
-nixPkgs = ["nodejs"]
+nixPkgs = ["nodejs", "curl"]
 cacheDirectories = ["~/.npm", "~/.cache/nix"]
 
 [phases.install]
