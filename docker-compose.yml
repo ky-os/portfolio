@@ -1,0 +1,71 @@
+services:
+  convex-backend:
+    image: ghcr.io/get-convex/convex-backend:latest
+    stop_grace_period: 10s
+    stop_signal: SIGINT
+    ports:
+      # Convex API
+      - "${CONVEX_PORT:-3210}:3210"
+      # Convex HTTP Actions (site proxy)
+      - "${CONVEX_SITE_PROXY_PORT:-3211}:3211"
+    volumes:
+      - convex_data:/convex/data
+    environment:
+      # Public URLs as accessed by the browser (set these to your domain in production)
+      - CONVEX_CLOUD_ORIGIN=${CONVEX_CLOUD_ORIGIN:-http://localhost:${CONVEX_PORT:-3210}}
+      - CONVEX_SITE_ORIGIN=${CONVEX_SITE_ORIGIN:-http://localhost:${CONVEX_SITE_PROXY_PORT:-3211}}
+
+      # Optional (recommended for production): connect to Postgres/MySQL
+      - POSTGRES_URL
+      - MYSQL_URL
+      - DO_NOT_REQUIRE_SSL
+
+      # Optional: override the default instance name (affects DB name: hyphens become underscores)
+      - INSTANCE_NAME
+      - INSTANCE_SECRET
+
+      # Optional knobs
+      - DISABLE_BEACON
+      - REDACT_LOGS_TO_CLIENT
+      - RUST_LOG=${RUST_LOG:-info}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3210/version"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
+
+  convex-dashboard:
+    image: ghcr.io/get-convex/convex-dashboard:latest
+    stop_grace_period: 10s
+    stop_signal: SIGINT
+    ports:
+      - "${CONVEX_DASHBOARD_PORT:-6791}:6791"
+    environment:
+      - NEXT_PUBLIC_DEPLOYMENT_URL=${NEXT_PUBLIC_DEPLOYMENT_URL:-http://localhost:${CONVEX_PORT:-3210}}
+    depends_on:
+      convex-backend:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # This is compiled into the client bundle (browser must be able to reach it).
+        NEXT_PUBLIC_CONVEX_URL: ${NEXT_PUBLIC_CONVEX_URL:-http://localhost:${CONVEX_PORT:-3210}}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    environment:
+      # Server-side calls from Next.js container -> Convex container
+      - CONVEX_URL=http://convex-backend:3210
+      - CONVEX_SELF_HOSTED_URL=http://convex-backend:3210
+
+      # Client-side calls from the browser -> host port (override to your domain in production)
+      - NEXT_PUBLIC_CONVEX_URL=${NEXT_PUBLIC_CONVEX_URL:-http://localhost:${CONVEX_PORT:-3210}}
+    depends_on:
+      convex-backend:
+        condition: service_healthy
+
+volumes:
+  convex_data:
