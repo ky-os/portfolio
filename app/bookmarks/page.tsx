@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { convex } from "@/lib/convex";
+import { getConvexHttpClient } from "@/lib/convex";
 import { api } from "../../convex/_generated/api";
 import { Doc } from "../../convex/_generated/dataModel";
 
@@ -11,6 +11,7 @@ export const metadata = {
 };
 
 export default async function BookmarksPage() {
+  const convex = getConvexHttpClient();
   const bookmarks = await convex.query(api.queries.getBookmarks);
 
   const groupedBookmarks = bookmarks.reduce((acc, bookmark) => {
