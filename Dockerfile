@@ -11,7 +11,7 @@ RUN --mount=type=cache,target=/root/.npm \
 
 
 FROM base AS builder
-ENV NODE_ENV=development
+ENV NODE_ENV=production
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN --mount=type=cache,target=/root/.npm \

@@ -33,7 +33,10 @@ export const seedData = action({
         ...expData,
         logo: logo ?? undefined,
       };
-      const newId = await ctx.runMutation(api.mutations.addExperience, sanitizedExp);
+      const newId = await ctx.runMutation(
+        api.mutations.addExperience,
+        sanitizedExp
+      );
       experienceIdMap.set(id, newId);
       console.log(`Added experience: ${exp.name}`);
     }
@@ -53,6 +56,7 @@ export const seedData = action({
 
       // Remove the string experienceId and replace with the actual ID
       const { experienceId: _, ...projectData } = project;
+      void _;
 
       await ctx.runMutation(api.mutations.addProject, {
         ...projectData,
@@ -69,10 +73,7 @@ export const seedData = action({
     }
 
     // 5. Seed Featured Company
-    await ctx.runMutation(
-      api.mutations.addFeaturedCompany,
-      featuredCompany
-    );
+    await ctx.runMutation(api.mutations.addFeaturedCompany, featuredCompany);
     console.log("Added featured company.");
 
     console.log("Database seeding completed successfully!");
