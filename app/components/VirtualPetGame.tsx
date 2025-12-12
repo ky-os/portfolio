@@ -270,93 +270,123 @@ export default function VirtualPetGame({
     useEffect(() => {
         if (!canvasRef.current || kRef.current) return;
 
-        const rect = canvasRef.current.getBoundingClientRect();
-        const width = rect.width || window.innerWidth;
-        const height = rect.height || 300;
+        const petsMap = petsMapRef.current;
 
-        const k = kaplay({
-            canvas: canvasRef.current,
-            width: width,
-            height: height,
-            background: [0, 0, 0, 0],
-            global: false,
-            debug: false,
-            pixelDensity: 2,
-            loadingScreen: false,
-            focus: false,
+        let rafId: number | null = null;
+        let k: KAPLAYCtx | null = null;
+
+        // In React 18 Strict Mode (dev), effects mount/unmount/mount rapidly.
+        // Kaplay keeps a singleton internally and quit() finishes on frameEnd,
+        // so we defer initialization to the next frame to avoid triggering
+        // the "already initialized" warning during the same tick.
+        rafId = window.requestAnimationFrame(() => {
+            if (!canvasRef.current || kRef.current) return;
+
+            const rect = canvasRef.current.getBoundingClientRect();
+            const width = rect.width || window.innerWidth;
+            const height = rect.height || 300;
+
+            k = kaplay({
+                canvas: canvasRef.current,
+                width: width,
+                height: height,
+                background: [0, 0, 0, 0],
+                global: false,
+                debug: false,
+                pixelDensity: 2,
+                loadingScreen: false,
+                focus: false,
+            });
+            kRef.current = k;
+
+            // Load Sprites
+            // 6-frame strip for Walking
+            const walkSliceConfig = {
+                sliceX: 6,
+                anims: {
+                    walk: { from: 0, to: 5, loop: true, speed: 10 },
+                }
+            };
+
+            // 4-frame strip for Idle
+            const idleSliceConfig = {
+                sliceX: 4,
+                anims: {
+                    idle: { from: 0, to: 3, loop: true, speed: 8 },
+                }
+            };
+
+            // 4-frame strip for Attack (used for Play/Bark)
+            const attackSliceConfig = {
+                sliceX: 4,
+                anims: {
+                    idle: { from: 0, to: 3, loop: true, speed: 8 },
+                }
+            };
+
+            // 4-frame strip for Death
+            const deathSliceConfig = {
+                sliceX: 4,
+                anims: {
+                    death: { from: 0, to: 3, loop: false, speed: 8 },
+                }
+            };
+
+            // 2-frame strip for Hurt
+            const hurtSliceConfig = {
+                sliceX: 2,
+                anims: {
+                    hurt: { from: 0, to: 1, loop: true, speed: 8 },
+                }
+            };
+
+            // Dog 1
+            k.loadSprite("dog1_walk", encodeURI("/pet/dog-1/Walk.png"), walkSliceConfig);
+            k.loadSprite("dog1_sit", encodeURI("/pet/dog-1/Idle.png"), idleSliceConfig);
+            k.loadSprite("dog1_play", encodeURI("/pet/dog-1/Attack.png"), attackSliceConfig);
+            k.loadSprite("dog1_death", encodeURI("/pet/dog-1/Death.png"), deathSliceConfig);
+            k.loadSprite("dog1_hurt", encodeURI("/pet/dog-1/Hurt.png"), hurtSliceConfig);
+
+            // Dog 2
+            k.loadSprite("dog2_walk", encodeURI("/pet/dog-2/Walk.png"), walkSliceConfig);
+            k.loadSprite("dog2_sit", encodeURI("/pet/dog-2/Idle.png"), idleSliceConfig);
+            k.loadSprite("dog2_play", encodeURI("/pet/dog-2/Attack.png"), attackSliceConfig);
+            k.loadSprite("dog2_death", encodeURI("/pet/dog-2/Death.png"), deathSliceConfig);
+            k.loadSprite("dog2_hurt", encodeURI("/pet/dog-2/Hurt.png"), hurtSliceConfig);
+
+            // Create Hearts for Health Bar
+            const hearts: GameObj[] = [];
+            for (let i = 0; i < 3; i++) {
+                const heart = k.add([
+                    k.text("♥", { size: 24, font: "sans-serif" }),
+                    k.pos(0, 0),
+                    k.color(255, 0, 0),
+                    k.opacity(0),
+                    k.anchor("center"),
+                    k.z(100), // Ensure it's on top
+                    "heart"
+                ]);
+                hearts.push(heart);
+            }
+            heartsRef.current = hearts;
         });
-        kRef.current = k;
 
-        // Load Sprites
-        // 6-frame strip for Walking
-        const walkSliceConfig = {
-            sliceX: 6,
-            anims: {
-                walk: { from: 0, to: 5, loop: true, speed: 10 },
+        return () => {
+            if (rafId != null) {
+                window.cancelAnimationFrame(rafId);
+                rafId = null;
+            }
+
+            // React StrictMode will mount/unmount/mount in dev.
+            // Kaplay keeps a singleton internally, so we must quit on unmount.
+            try {
+                k?.quit();
+            } finally {
+                kRef.current = null;
+                petsMap.clear();
+                heartsRef.current = [];
             }
         };
-
-        // 4-frame strip for Idle
-        const idleSliceConfig = {
-            sliceX: 4,
-            anims: {
-                idle: { from: 0, to: 3, loop: true, speed: 8 },
-            }
-        };
-
-        // 4-frame strip for Attack (used for Play/Bark)
-        const attackSliceConfig = {
-            sliceX: 4,
-            anims: {
-                idle: { from: 0, to: 3, loop: true, speed: 8 },
-            }
-        };
-
-        // 4-frame strip for Death
-        const deathSliceConfig = {
-            sliceX: 4,
-            anims: {
-                death: { from: 0, to: 3, loop: false, speed: 8 },
-            }
-        };
-
-        // 2-frame strip for Hurt
-        const hurtSliceConfig = {
-            sliceX: 2,
-            anims: {
-                hurt: { from: 0, to: 1, loop: true, speed: 8 },
-            }
-        };
-
-        // Dog 1
-        k.loadSprite("dog1_walk", encodeURI("/pet/dog-1/Walk.png"), walkSliceConfig);
-        k.loadSprite("dog1_sit", encodeURI("/pet/dog-1/Idle.png"), idleSliceConfig);
-        k.loadSprite("dog1_play", encodeURI("/pet/dog-1/Attack.png"), attackSliceConfig);
-        k.loadSprite("dog1_death", encodeURI("/pet/dog-1/Death.png"), deathSliceConfig);
-        k.loadSprite("dog1_hurt", encodeURI("/pet/dog-1/Hurt.png"), hurtSliceConfig);
-
-        // Dog 2
-        k.loadSprite("dog2_walk", encodeURI("/pet/dog-2/Walk.png"), walkSliceConfig);
-        k.loadSprite("dog2_sit", encodeURI("/pet/dog-2/Idle.png"), idleSliceConfig);
-        k.loadSprite("dog2_play", encodeURI("/pet/dog-2/Attack.png"), attackSliceConfig);
-        k.loadSprite("dog2_death", encodeURI("/pet/dog-2/Death.png"), deathSliceConfig);
-        k.loadSprite("dog2_hurt", encodeURI("/pet/dog-2/Hurt.png"), hurtSliceConfig);
-
-        // Create Hearts for Health Bar
-        const hearts: GameObj[] = [];
-        for (let i = 0; i < 3; i++) {
-            const heart = k.add([
-                k.text("♥", { size: 24, font: "sans-serif" }),
-                k.pos(0, 0),
-                k.color(255, 0, 0),
-                k.opacity(0),
-                k.anchor("center"),
-                k.z(100), // Ensure it's on top
-                "heart"
-            ]);
-            hearts.push(heart);
-        }
-        heartsRef.current = hearts;
 
     }, []);
 
