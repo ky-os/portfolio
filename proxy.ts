@@ -33,7 +33,10 @@ export const proxy = convexAuthNextjsMiddleware(
     return NextResponse.redirect(url);
   }
   },
-  { convexUrl },
+  {
+    convexUrl,
+    verbose: process.env.CONVEX_AUTH_VERBOSE === "true",
+  },
 );
 
 export const config = {
