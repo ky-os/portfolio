@@ -32,6 +32,7 @@ export const updateExperience = mutation({
     logo: v.optional(v.string()),
     url: v.optional(v.string()),
     description: v.optional(v.string()),
+    initials: v.optional(v.string()),
     order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
