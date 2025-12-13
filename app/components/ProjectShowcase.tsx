@@ -2,8 +2,7 @@
 
 import React, { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
-import { Preloaded, usePreloadedQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { Doc } from "../../convex/_generated/dataModel";
 import FeaturedCompany from "./FeaturedCompany";
 import ProfessionalExperience from "./ProfessionalExperience";
 import TechnologiesAndTools from "./TechnologiesAndTools";
@@ -11,25 +10,21 @@ import Navbar from "./Navbar";
 import ProjectCard from "./ProjectCard";
 import { SectionHeader } from "./ui/SectionHeader";
 import { Footer } from "./ui/Footer";
+import { Project } from "@/lib/data";
 
 interface ProjectShowcaseProps {
-    preloadedProjects: Preloaded<typeof api.queries.getProjects>;
-    preloadedFeaturedCompany: Preloaded<typeof api.queries.getFeaturedCompany>;
-    preloadedExperiences: Preloaded<typeof api.queries.getExperiences>;
-    preloadedSkills: Preloaded<typeof api.queries.getSkills>;
+    projects: Project[];
+    featuredCompany: Doc<"featuredCompany">;
+    experiences: Doc<"experiences">[];
+    skills: Doc<"skills">[];
 }
 
 export default function ProjectShowcase({
-    preloadedProjects,
-    preloadedFeaturedCompany,
-    preloadedExperiences,
-    preloadedSkills
+    projects,
+    featuredCompany,
+    experiences,
+    skills
 }: ProjectShowcaseProps) {
-    const projects = usePreloadedQuery(preloadedProjects);
-    const featuredCompany = usePreloadedQuery(preloadedFeaturedCompany);
-    const experiences = usePreloadedQuery(preloadedExperiences);
-    const skills = usePreloadedQuery(preloadedSkills);
-
     const [activeTab, setActiveTab] = useState<"work" | "personal">("work");
     const [selectedTech, setSelectedTech] = useState<string | null>(null);
 
@@ -61,7 +56,7 @@ export default function ProjectShowcase({
         return "Junior Engineer";
     }, []);
 
-    const getTopSkills = useCallback((allProjects: typeof projects) => {
+    const getTopSkills = useCallback((allProjects: Project[]) => {
         const skillMap: Record<string, number> = {};
 
         allProjects.forEach(project => {
@@ -84,7 +79,7 @@ export default function ProjectShowcase({
             }));
     }, []);
 
-    const getAttributes = useCallback((allProjects: typeof projects) => {
+    const getAttributes = useCallback((allProjects: Project[]) => {
         const stats = {
             "Backend": 0,
             "Frontend": 0,
