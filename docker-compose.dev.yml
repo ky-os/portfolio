@@ -1,0 +1,83 @@
+services:
+  convex-backend:
+    container_name: portfolio-convex-backend-dev
+    image: ghcr.io/get-convex/convex-backend:latest
+    stop_grace_period: 10s
+    stop_signal: SIGINT
+    ports:
+      - "3210:3210"
+      - "3211:3211"
+    volumes:
+      - convex_data:/convex/data
+    environment:
+      # Public URLs as accessed by the browser.
+      - CONVEX_CLOUD_ORIGIN=http://localhost:3210
+      - CONVEX_SITE_ORIGIN=http://localhost:3211
+
+      # Optional (recommended for production): connect to Postgres/MySQL
+      - POSTGRES_URL
+      - MYSQL_URL
+      - DO_NOT_REQUIRE_SSL
+
+      # Optional: override the default instance name (affects DB name: hyphens become underscores)
+      - INSTANCE_NAME
+      - INSTANCE_SECRET
+
+      # Optional knobs
+      - DISABLE_BEACON
+      - REDACT_LOGS_TO_CLIENT
+      - RUST_LOG=${RUST_LOG:-info}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3210/version"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
+
+  convex-dashboard:
+    container_name: portfolio-convex-dashboard-dev
+    image: ghcr.io/get-convex/convex-dashboard:latest
+    profiles:
+      - dashboard
+    stop_grace_period: 10s
+    stop_signal: SIGINT
+    ports:
+      - "6791:6791"
+    environment:
+      - NEXT_PUBLIC_DEPLOYMENT_URL=http://localhost:3210
+    depends_on:
+      convex-backend:
+        condition: service_healthy
+
+  web:
+    container_name: portfolio-web-dev
+    image: node:22-bullseye-slim
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+
+      # More reliable file watching on Docker Desktop / Windows
+      - CHOKIDAR_USEPOLLING=1
+      - CHOKIDAR_INTERVAL=1000
+      - WATCHPACK_POLLING=1000
+
+      # Convex env vars are loaded from env_file (.env.local)
+    volumes:
+      - ./:/app
+      - web_node_modules:/app/node_modules
+      - web_next_cache:/app/.next
+    depends_on:
+      convex-backend:
+        condition: service_healthy
+    command: >
+      sh -lc "if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then npm ci --no-audit --fund=false; fi && npm run dev -- --webpack -H 0.0.0.0 -p 3000"
+
+volumes:
+  convex_data:
+  web_node_modules:
+  web_next_cache:
